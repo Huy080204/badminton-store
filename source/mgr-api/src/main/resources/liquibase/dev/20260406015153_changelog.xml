@@ -1,0 +1,93 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="Authentication" id="1775440321012-3">
+        <addColumn tableName="db_mgr_seller">
+            <column name="created_by" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Authentication" id="1775440321012-4">
+        <addColumn tableName="db_mgr_seller">
+            <column name="created_date" type="datetime" defaultValueComputed="NOW()" >
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Authentication" id="1775440321012-5">
+        <addColumn tableName="db_mgr_seller">
+            <column name="id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Authentication" id="1775440321012-6">
+        <addColumn tableName="db_mgr_seller">
+            <column name="modified_by" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Authentication" id="1775440321012-7">
+        <addColumn tableName="db_mgr_seller">
+            <column name="modified_date" type="datetime" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Authentication" id="1775440321012-8">
+        <addColumn tableName="db_mgr_seller">
+            <column name="status" type="integer">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="Authentication" id="1775440321012-9">
+        <createIndex indexName="IX_db_mgr_sellerPK" tableName="db_mgr_seller" unique="true">
+            <column name="id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="Authentication" id="1775440321012-10">
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="db_mgr_seller" constraintName="FK7sj5lenr327u2b0gul4y1596f" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_mgr_account" validate="true"/>
+    </changeSet>
+    <changeSet id="1775440321012-11" author="Authentication">
+        <sql>
+            ALTER TABLE db_mgr_seller MODIFY COLUMN id BIGINT NOT NULL FIRST;
+        </sql>
+    </changeSet>
+    <changeSet author="Authentication" id="1775440321012-12">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyName="FKbj3xugv4kn80nmrpiet1b4rdh" foreignKeyTableName="db_mgr_seller"/>
+        </preConditions>
+        <dropForeignKeyConstraint baseTableName="db_mgr_seller" constraintName="FKbj3xugv4kn80nmrpiet1b4rdh"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1775440321012-13">
+        <preConditions onFail="MARK_RAN">
+            <primaryKeyExists tableName="db_mgr_seller"/>
+        </preConditions>
+              <dropPrimaryKey tableName="db_mgr_seller"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1775440321012-14">
+        <renameColumn tableName="db_mgr_seller" oldColumnName="account_id" newColumnName="id" columnDataType="BIGINT"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1775440321012-15">
+        <addPrimaryKey columnNames="id" constraintName="db_mgr_sellerPK" tableName="db_mgr_seller"/>
+        <addForeignKeyConstraint baseColumnNames="id"
+                                 baseTableName="db_mgr_seller"
+                                 constraintName="FK_seller_account_mapsid"
+                                 onDelete="CASCADE"
+                                 referencedColumnNames="id"
+                                 referencedTableName="db_mgr_account"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1775440321012-16">
+        <addColumn tableName="db_mgr_seller">
+            <column name="status" type="integer" defaultValueNumeric="1"><constraints nullable="false"/></column>
+            <column name="created_by" type="varchar(255)" defaultValue="system"><constraints nullable="false"/></column>
+            <column name="created_date" type="datetime" defaultValueComputed="NOW()"><constraints nullable="false"/></column>
+            <column name="modified_by" type="varchar(255)" defaultValue="system"><constraints nullable="false"/></column>
+            <column name="modified_date" type="datetime" defaultValueComputed="NOW()"><constraints nullable="false"/></column>
+        </addColumn>
+        <!-- Đưa id lên đầu bảng -->
+        <sql dbms="mysql">ALTER TABLE db_mgr_seller MODIFY COLUMN id BIGINT NOT NULL FIRST;</sql>
+    </changeSet>
+</databaseChangeLog>
