@@ -19,7 +19,7 @@ public class Group extends Auditable<String> {
     @Column(name = "description", length = 1000)
     private String description;
     @Column(name = "kind")
-    private Integer kind;
+    private Integer kind; // 1: admin, 2: user, 3: seller
     @Column(name = "is_system_role")
     private Boolean isSystemRole = false;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)

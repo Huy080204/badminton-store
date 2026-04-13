@@ -47,4 +47,9 @@ public class ErrorCode {
 
     public static final String ACCOUNT_ERROR_EMAIL_EXISTED = "ERROR-ACCOUNT-EMAIL-0001";
     public static final String ACCOUNT_ERROR_PHONE_EXISTED = "ERROR-ACCOUNT-PHONE-0001";
+
+    public static final String USER_ERROR_USERNAME_EXISTED = "USERNAME_EXISTED-0001";
+    public static final String USER_ERROR_EMAIL_EXISTED = "ERROR_EMAIL_EXISTED-0002";
+    public static final String USER_ERROR_PHONE_EXISTED = "PHONE_EXISTED-0003";
+    public static final String USER_ERROR_PERMISSION = "PHONE_EXISTED-0004";
 }

@@ -10,6 +10,8 @@ public class MgrConstant {
     public static final Integer STATUS_PENDING = 0;
     public static final Integer STATUS_LOCK = -1;
     public static final Integer STATUS_DELETE = -2;
+    public static final Integer USER_KIND_USER = 2;
+    public static final String USER_GROUD_USER = "ROLE USER";
     private MgrConstant() {
         throw new IllegalStateException("Utility class");
     }
