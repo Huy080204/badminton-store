@@ -37,7 +37,7 @@
             <properties>
                 <changelog.author>Authentication</changelog.author>
                 <changelog.dir>${basedir}/src/main/resources/liquibase/dev</changelog.dir>
-                <db.url>jdbc:mysql://localhost:3306/db_mgr</db.url>
+                <db.url>jdbc:mysql://localhost:3306/db_badminton</db.url>
                 <db.username>root</db.username>
                 <db.password>123456</db.password>
                 <package.model>com.mgr.api.model</package.model>

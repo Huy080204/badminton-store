@@ -1,15 +1,17 @@
 package com.mgr.api.form.category;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 
-@Data
-@ApiModel
+@Getter
+@Setter
+@NoArgsConstructor
 public class UpdateCategoryForm {
-    @NotNull(message = "id cant not be null")
+    @NotNull(message = "id is required")
     @ApiModelProperty(name = "id", required = true)
     private Long id;
 
@@ -18,4 +20,10 @@ public class UpdateCategoryForm {
 
     @ApiModelProperty(name = "description")
     private String description;
+
+    @ApiModelProperty(name = "parentId")
+    private Long parentId;
+
+    @ApiModelProperty(name = "status")
+    private Integer status;
 }
