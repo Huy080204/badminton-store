@@ -16,6 +16,12 @@ public class ErrorCode {
     public static final String ACCOUNT_ERROR_UNABLE_UPDATE = "ERROR-ACCOUNT-0004";
     public static final String ACCOUNT_ERROR_UNABLE_DELETE = "ERROR-ACCOUNT-0005";
 
+    public static final String ACCOUNT_ERROR_EMAIL_EXISTED = "ERROR-EMAIL-0001";
+
+    public static final String ACCOUNT_ERROR_PHONE_EXISTED = "ERROR-PHONE-0001";
+    public static final String CATEGORY_ERROR_NOT_FOUND = "ERROR-CATEGORY-0001";
+    public static final String PRODUCT_ERROR_NOT_FOUND = "ERROR-PRODUCT-0001";
+
     /**
      * Starting error code DATABASE_ERROR
      */
@@ -34,19 +40,25 @@ public class ErrorCode {
     public static final String GROUP_ERROR_NOT_FOUND = "ERROR-GROUP-0000";
     public static final String GROUP_ERROR_NAME_EXISTED = "ERROR-GROUP-0001";
 
-    /**
-     * Group error code
-     */
-    public static final String CATEGORY_ERROR_NOT_FOUND = "ERROR-CATEGORY-0000";
-    public static final String CATEGORY_ERROR_NAME_EXISTED = "ERROR-CATEGORY-0001";
+    public static final String USER_ERROR_USERNAME_EXISTED = "ERROR-USER-0001";
+    public static final String USER_ERROR_NOT_FOUND = "ERROR-USER-0002";
+    public static final String USER_ERROR_EMAIL_EXISTED = "ERROR-USER-0003";
+    public static final String USER_ERROR_PHONE_EXISTED = "ERROR-USER-0004";
 
-    //News code
-    public static final String NEWS_ERROR_NOT_FOUND = "ERROR-NEWS-0000";
+    public static final String USER_ERROR_PERMISSION = "ERROR-USER-0004";
 
-    //User code
-    public static final String USER_ERROR_NOT_FOUND = "ERROR-USER-0000";
-    public static final String ACCOUNT_ERROR_EMAIL_EXISTED = "ERROR-USER-0001";
-    public static final String ACCOUNT_ERROR_PHONE_EXISTED = "ERROR-USER-0002";
+    public static final String NATION_ADDRESS_INVALID = "ERROR-NATION-0001";
+    public static final String NATION_ERROR_NOT_FOUND = "ERROR-NATION-0000";
+    public static final String NATION_ERROR_INVALID = "ERROR-NATION-0003";
+    public static final String NATION_ERROR_EXIST = "ERROR-USER-0001";
+
+    public static final String NATION_ERROR_CANNOT_DELETE = "ERROR-USER-0004";
+
+    public static final String ADDRESS_ERROR_NOT_FOUND = "ERROR-USER-0004";
+    public static final String ADDRESS_ERROR_INVALID  = "ERROR-USER-0002";
+    public static final String ADDRESS_ERROR_PERMISSION  = "ERROR-ADDRESS-0002";
+
+
 
 
 

@@ -1,23 +1,31 @@
 package com.mgr.api.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = TablePrefix.PREFIX_TABLE + "user")
 @EntityListeners(AuditingEntityListener.class)
-@Getter
-@Setter
-public class User extends Auditable<String> {
-    @OneToOne
-    @MapsId // Mapping id from account
-    @JoinColumn(name = "id")
-    private Account account;
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class User extends Auditable<String>{
 
+    @Id
+    private Long id;
     private Integer gender;
-    private Date dateOfBirth;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Address> address;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "account_id")
+    private Account account;
 }
+
