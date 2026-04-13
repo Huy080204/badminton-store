@@ -33,21 +33,18 @@ public class ErrorCode {
      */
     public static final String GROUP_ERROR_NOT_FOUND = "ERROR-GROUP-0000";
     public static final String GROUP_ERROR_NAME_EXISTED = "ERROR-GROUP-0001";
-
     /**
-     * Group error code
+     * User error code
      */
-    public static final String CATEGORY_ERROR_NOT_FOUND = "ERROR-CATEGORY-0000";
-    public static final String CATEGORY_ERROR_NAME_EXISTED = "ERROR-CATEGORY-0001";
-
-    //News code
-    public static final String NEWS_ERROR_NOT_FOUND = "ERROR-NEWS-0000";
-
-    //User code
     public static final String USER_ERROR_NOT_FOUND = "ERROR-USER-0000";
-    public static final String ACCOUNT_ERROR_EMAIL_EXISTED = "ERROR-USER-0001";
-    public static final String ACCOUNT_ERROR_PHONE_EXISTED = "ERROR-USER-0002";
+    public static final String USER_ERROR_EXISTED = "ERROR-USER-0001";
 
+    public static final String PRODUCT_ERROR_NOT_FOUND = "ERROR-PRODUCT-0001";
+    public static final String CATEGORY_ERROR_NOT_FOUND = "ERROR-CATEGORY-0001";
+    public static final String ERROR_INVALID_FORM = "ERROR-FORM-0001";
+    public static final String COUPON_ERROR_NOT_FOUND = "ERROR-COUPON-0001";
+    public static final String ORDER_ERROR_NOT_FOUND = "ERROR-ORDER-0001";
 
-
+    public static final String ACCOUNT_ERROR_EMAIL_EXISTED = "ERROR-ACCOUNT-EMAIL-0001";
+    public static final String ACCOUNT_ERROR_PHONE_EXISTED = "ERROR-ACCOUNT-PHONE-0001";
 }
