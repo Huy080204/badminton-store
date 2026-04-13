@@ -1,15 +1,7 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
     <include file="db.changelog-1.0.0.xml" relativeToChangelogFile="true"/>
-    <include file="20260404062352_changelog.xml" relativeToChangelogFile="true"/>
-    <include file="20260406030718_changelog.xml" relativeToChangelogFile="true"/>
-    <include file="20260406041724_changelog.xml" relativeToChangelogFile="true"/>
-    <include file="20260406061440_changelog.xml" relativeToChangelogFile="true"/>
-    <include file="20260406075110_changelog.xml" relativeToChangelogFile="true"/>
     <include file="20260404061950_changelog.xml" relativeToChangelogFile="true"/>
-    <include file="20260411094100_changelog.xml" relativeToChangelogFile="true"/>
-<<<<<<< HEAD
     <include file="20260413052731_changelog.xml" relativeToChangelogFile="true"/>
-=======
->>>>>>> 6582894c7d0f3da30d2e54336b17bac8803fcdf7
+    <include file="20260413083721_changelog.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

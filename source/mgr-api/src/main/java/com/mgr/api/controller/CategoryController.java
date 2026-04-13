@@ -110,7 +110,3 @@ public class CategoryController extends ABasicController {
         return makeSuccessResponse(null, "Delete Category success");
     }
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> 6582894c7d0f3da30d2e54336b17bac8803fcdf7
