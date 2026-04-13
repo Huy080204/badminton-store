@@ -2,19 +2,24 @@ package com.mgr.api.form.category;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
-@Data
 @ApiModel
+@Getter
+@Setter
+@NoArgsConstructor
 public class CreateCategoryForm {
-    @NotEmpty(message = "Name cant not be empty")
+    @NotEmpty(message = "name is required")
     @ApiModelProperty(name = "name", required = true)
     private String name;
 
-    @NotEmpty(message = "description cant not be empty")
-    @ApiModelProperty(name = "description", required = true)
+    @ApiModelProperty(name = "description")
     private String description;
+
+    @ApiModelProperty(name = "parentId")
+    private Long parentId;
 }

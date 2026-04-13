@@ -57,7 +57,10 @@ public class ErrorCode {
     public static final String ADDRESS_ERROR_NOT_FOUND = "ERROR-USER-0004";
     public static final String ADDRESS_ERROR_INVALID  = "ERROR-USER-0002";
     public static final String ADDRESS_ERROR_PERMISSION  = "ERROR-ADDRESS-0002";
-
+    public static final String USER_ERROR_EXISTED = "ERROR-USER-0001";
+    public static final String ERROR_INVALID_FORM = "ERROR-FORM-0001";
+    public static final String COUPON_ERROR_NOT_FOUND = "ERROR-COUPON-0001";
+    public static final String ORDER_ERROR_NOT_FOUND = "ERROR-ORDER-0001";
 
 
 
