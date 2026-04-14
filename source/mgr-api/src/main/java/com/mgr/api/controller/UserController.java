@@ -24,18 +24,14 @@ import com.mgr.api.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.mgr.api.constant.MgrConstant.USER_GROUD_USER;
 import static com.mgr.api.constant.MgrConstant.USER_KIND_USER;
 
 @RestController
@@ -58,7 +54,6 @@ public class UserController extends ABasicController{
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('USR_C')")
     public ApiMessageDto<Void> create(@Valid @RequestBody CreateUserForm createUserForm, BindingResult bindingResult) {
-        ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         if(!isSuperAdmin()){
             throw new BadRequestException("You don't have permission to create user", ErrorCode.USER_ERROR_PERMISSION);
         }
@@ -92,8 +87,6 @@ public class UserController extends ABasicController{
         user.getAccount().setGroup(defaultGroup);
         user.getAccount().setKind(USER_KIND_USER);
         userRepository.save(user);
-        userRepository.save(user);
-
         return makeSuccessResponse("Create success");
     }
 
@@ -103,7 +96,6 @@ public class UserController extends ABasicController{
         if(!isSuperAdmin()){
             throw new BadRequestException("You don't have permission to get user", ErrorCode.USER_ERROR_PERMISSION);
         }
-        ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         User user = userRepository.findById(updateUserForm.getId())
                 .orElseThrow(() -> new NotFoundException("User not found!", ErrorCode.USER_ERROR_NOT_FOUND));
         user.getAccount().setFullName(updateUserForm.getFullName());
@@ -123,27 +115,23 @@ public class UserController extends ABasicController{
             throw new BadRequestException("You don't have permission to get user", ErrorCode.USER_ERROR_PERMISSION);
         }
         ApiMessageDto<UserDto> apiMessageDto = new ApiMessageDto<>();
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            throw new NotFoundException("User not found!", ErrorCode.USER_ERROR_NOT_FOUND);
-        }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found!", ErrorCode.USER_ERROR_NOT_FOUND));
         return makeSuccessResponse( userMapper.fromUserEntityToDto(user), "Get success");
     }
 
     @GetMapping(value = "/profile", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('USR_V')")
     public ApiMessageDto<UserDto> profile() {
-        ApiMessageDto<UserDto> apiMessageDto = new ApiMessageDto<>();
         User user = userRepository.findById(getCurrentUser())
                 .orElseThrow(() -> new NotFoundException("User not found!", ErrorCode.USER_ERROR_NOT_FOUND));
         return makeSuccessResponse( userMapper.fromUserEntityToDto(user), "Get success");
     }
 
     //update profile
-    @PutMapping(value = "/updateProfile", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/update-profile", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('USR_U')")
     public ApiMessageDto<Void> updateProfile(@Valid @RequestBody UpdateUserForm updateUserForm, BindingResult bindingResult) {
-        ApiMessageDto<String> apiMessageDto = new ApiMessageDto<>();
         User user = userRepository.findById(getCurrentUser())
                 .orElseThrow(() -> new NotFoundException("User not found!", ErrorCode.USER_ERROR_NOT_FOUND));
         user.getAccount().setFullName(updateUserForm.getFullName());
