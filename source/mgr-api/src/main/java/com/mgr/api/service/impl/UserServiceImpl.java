@@ -104,21 +104,20 @@ public class UserServiceImpl implements UserDetailsService {
         OAuth2Authentication auth = new OAuth2Authentication(oAuth2Request, authenticationToken);
         return tokenServices.createAccessToken(auth);
     }
-    public Authentication authenticateForUserType(String username, String password, int requiredKind) {
-        // Tìm Account
-        Account account = accountRepository.findByUsername(username);
+    public Authentication authenticateSeller(String identifier, String password) {
+        // Tìm Account Seller (kind = 3) bằng username, email hoặc phone
+        Account account = accountRepository.findByIdentifier(identifier).orElse(null);
 
-        if (account == null || account.getKind() != requiredKind) {
-            throw new BadCredentialsException("Invalid account or unauthorized kind");
+        if (account == null || account.getKind() != MgrConstant.USER_KIND_SELLER) {
+            throw new BadCredentialsException("Invalid seller account");
         }
 
         if (!passwordEncoder.matches(password, account.getPassword())) {
             throw new BadCredentialsException("Invalid password");
         }
 
-        UserDetails userDetails = loadUserByUsername(username);
+        UserDetails userDetails = loadUserByUsername(account.getUsername());
 
-        // Trả về đối tượng Authentication đơn thuần
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 

@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface GroupRepository extends JpaRepository<Group, Long>, JpaSpecificationExecutor<Group> {
     Group findFirstByName(String name);
+    Group findFirstByKind(Integer kind);
 
     Optional<Group> findByIdAndIsSystemRole(Long id, Boolean isSystemRole);
 

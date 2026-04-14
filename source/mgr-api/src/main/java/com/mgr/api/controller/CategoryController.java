@@ -39,7 +39,7 @@ public class CategoryController extends ABasicController {
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('CAT_C')")
     @Transactional
-    public ApiMessageDto<String> create(@Valid @RequestBody CreateCategoryForm createCategoryForm, BindingResult bindingResult) {
+    public ApiMessageDto<Void> create(@Valid @RequestBody CreateCategoryForm createCategoryForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return makeResponse(false, null, "Invalid form", ErrorCode.ERROR_INVALID_FORM);
         }
@@ -59,7 +59,7 @@ public class CategoryController extends ABasicController {
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('CAT_U')")
     @Transactional
-    public ApiMessageDto<String> update(@Valid @RequestBody UpdateCategoryForm updateCategoryForm, BindingResult bindingResult) {
+    public ApiMessageDto<Void> update(@Valid @RequestBody UpdateCategoryForm updateCategoryForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return makeResponse(false, null, "Invalid form", ErrorCode.ERROR_INVALID_FORM);
         }

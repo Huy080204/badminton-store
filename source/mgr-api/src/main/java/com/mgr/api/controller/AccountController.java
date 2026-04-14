@@ -10,6 +10,7 @@ import com.mgr.api.exception.BadRequestException;
 import com.mgr.api.exception.NotFoundException;
 import com.mgr.api.exception.UnauthorizationException;
 import com.mgr.api.form.account.CreateAccountAdminForm;
+import com.mgr.api.form.account.RegistrationSellerForm;
 import com.mgr.api.form.account.UpdateAccountAdminForm;
 import com.mgr.api.form.account.UpdateProfileAdminForm;
 import com.mgr.api.mapper.AccountMapper;
@@ -86,6 +87,38 @@ public class AccountController extends ABasicController {
         accountRepository.save(account);
 
         apiMessageDto.setMessage("Create an account admin success.");
+        return apiMessageDto;
+    }
+
+    @PostMapping(value = "/register-seller", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
+    public ApiResponse<String> registerSeller(@Valid @RequestBody RegistrationSellerForm registrationSellerForm, BindingResult bindingResult) {
+        ApiResponse<String> apiMessageDto = new ApiResponse<>();
+        if (accountRepository.existsByUsername(registrationSellerForm.getUsername())) {
+            throw new BadRequestException("Username is existed!", ErrorCode.ACCOUNT_ERROR_USERNAME_EXISTED);
+        }
+
+        if (accountRepository.existsByEmail(registrationSellerForm.getEmail())) {
+            throw new BadRequestException("Email is existed!", ErrorCode.ACCOUNT_ERROR_EMAIL_EXISTED);
+        }
+
+        if (accountRepository.existsByPhone(registrationSellerForm.getPhone())) {
+            throw new BadRequestException("Phone is existed!", ErrorCode.ACCOUNT_ERROR_PHONE_EXISTED);
+        }
+
+        Group group = groupRepository.findFirstByKind(MgrConstant.USER_KIND_SELLER);
+        if (group == null) {
+            throw new NotFoundException("Seller group not found!", ErrorCode.GROUP_ERROR_NOT_FOUND);
+        }
+
+        Account account = accountMapper.fromRegistrationSellerFormToEntity(registrationSellerForm);
+        account.setPassword(passwordEncoder.encode(registrationSellerForm.getPassword()));
+        account.setKind(MgrConstant.USER_KIND_SELLER);
+        account.setGroup(group);
+        account.setStatus(MgrConstant.STATUS_PENDING);
+        accountRepository.save(account);
+
+        apiMessageDto.setMessage("Register seller account success. Please wait for admin approval.");
         return apiMessageDto;
     }
 
