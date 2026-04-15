@@ -24,7 +24,4 @@ public class UpdateUserForm {
 
     @ApiModelProperty(name = "avatarPath")
     private String avatarPath;
-
-//    @ApiModelProperty(name = "Address")
-//    private List<AddressDto> addressDtoList;
 }

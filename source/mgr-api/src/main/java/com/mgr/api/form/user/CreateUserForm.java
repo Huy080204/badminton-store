@@ -12,12 +12,10 @@ import java.util.Date;
 @Data
 public class CreateUserForm {
     @NotEmpty(message = "Username is required")
-    @Size(min = 4, max = 50, message = "Username must be between 4 and 50 characters")
     @ApiModelProperty(name = "username", required = true)
     private String username;
 
     @NotEmpty(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
     @ApiModelProperty(name = "password", required = true)
     private String password;
 
