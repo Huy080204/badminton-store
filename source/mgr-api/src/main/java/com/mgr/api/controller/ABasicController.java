@@ -14,6 +14,8 @@ import org.springframework.security.oauth2.provider.authentication.OAuth2Authent
 import java.util.List;
 import java.util.function.Function;
 
+import static com.mgr.api.constant.MgrConstant.USER_KIND_ADMIN;
+
 public class ABasicController {
     @Autowired
     private UserServiceImpl userService;
@@ -63,6 +65,13 @@ public class ABasicController {
             return mgrJwt.getIsSuperAdmin();
         }
         return false;
+    }
+    public boolean isAdmin() {
+        MgrJwt mgrJwt = userService.getAddInfoFromToken();
+        if (mgrJwt == null || mgrJwt.getKind() == null) {
+            return false;
+        }
+        return USER_KIND_ADMIN.equals(mgrJwt.getKind());
     }
 
     public String getCurrentToken() {
