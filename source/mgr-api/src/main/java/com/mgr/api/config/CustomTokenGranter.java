@@ -32,33 +32,9 @@ public class CustomTokenGranter extends AbstractTokenGranter {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
     }
-    @Override
-    public OAuth2AccessToken grant(String grantType, TokenRequest tokenRequest) {
-        // Kiểm tra xem grant_type gửi lên có phải là 'user' hoặc 'custom' không
-        if (!SecurityConstant.GRANT_TYPE_CUSTOM.equalsIgnoreCase(grantType) &&
-                !SecurityConstant.GRANT_TYPE_USER.equalsIgnoreCase(grantType)) {
-            return null;
-        }
-        return super.grant(grantType, tokenRequest);
-    }
 
     @Override
     protected OAuth2Authentication getOAuth2Authentication(ClientDetails client, TokenRequest tokenRequest) {
-        String grantType = tokenRequest.getGrantType();
-        // Logic dành riêng cho GRANT_TYPE_USER
-        if (SecurityConstant.GRANT_TYPE_USER.equalsIgnoreCase(grantType)) {
-            Map<String, String> parameters = tokenRequest.getRequestParameters();
-            String username = parameters.get("username");
-            String password = parameters.get("password");
-
-            // Xác thực người dùng (Lấy logic từ UserTokenGranter cũ)
-            Authentication userAuth = userService.authenticateForUserType(username, password, 2);
-            OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
-
-            return new OAuth2Authentication(storedOAuth2Request, userAuth);
-        }
-
-        // Mặc định gọi super cho các trường hợp khác
         return super.getOAuth2Authentication(client, tokenRequest);
     }
 
@@ -70,9 +46,20 @@ public class CustomTokenGranter extends AbstractTokenGranter {
             String username = tokenRequest.getRequestParameters().get("username");
             String password = tokenRequest.getRequestParameters().get("password");
             String tenant = tokenRequest.getRequestParameters().get("tenant");
+            String email = tokenRequest.getRequestParameters().get("email");
             try {
-                return userService.getAccessTokenForCustom(client, tokenRequest, username, password,
-                        tenant, grantType, this.getTokenServices());
+                if (SecurityConstant.GRANT_TYPE_USER.equalsIgnoreCase(tokenRequest.getGrantType())) {
+                    return userService.getAccessTokenForEmail(client,
+                            tokenRequest, email, password,
+                            tenant, tokenRequest.getGrantType(),
+                            this.getTokenServices());
+                }
+                else if (SecurityConstant.GRANT_TYPE_CUSTOM.equalsIgnoreCase(tokenRequest.getGrantType())) {
+                    return userService.getAccessTokenForCustom(client, tokenRequest, username, password, tenant, tokenRequest.getGrantType(), this.getTokenServices());
+                }
+                else if (!Objects.equals(tokenRequest.getGrantType(), SecurityConstant.GRANT_TYPE_PASSWORD)) {
+                    throw new InvalidTokenException("Invalid grant type: " + tokenRequest.getGrantType());
+                }
             } catch (GeneralSecurityException | IOException e) {
                 throw new InvalidTokenException("Account or tenant invalid");
             }

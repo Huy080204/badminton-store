@@ -119,7 +119,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 endpoints.getOAuth2RequestFactory(),
                 userService,
                 SecurityConstant.GRANT_TYPE_CUSTOM));
-
         // Đăng ký cho loại 'user' (Dùng chung class nhưng khai báo type khác)
         granters.add(new CustomTokenGranter(
                 authenticationManager,
