@@ -104,9 +104,10 @@ public class UserServiceImpl implements UserDetailsService {
         OAuth2Authentication auth = new OAuth2Authentication(oAuth2Request, authenticationToken);
         return tokenServices.createAccessToken(auth);
     }
-    public Authentication authenticateSeller(String identifier, String password) {
+
+    public Authentication authenticateSeller(String username, String password) {
         // Tìm Account Seller (kind = 3) bằng username, email hoặc phone
-        Account account = accountRepository.findByIdentifier(identifier).orElse(null);
+        Account account = accountRepository.findByIdentifier(username).orElse(null);
 
         if (account == null || account.getKind() != MgrConstant.USER_KIND_SELLER) {
             throw new BadCredentialsException("Invalid seller account");

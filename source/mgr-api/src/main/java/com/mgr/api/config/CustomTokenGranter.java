@@ -32,34 +32,9 @@ public class CustomTokenGranter extends AbstractTokenGranter {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
     }
-    @Override
-    public OAuth2AccessToken grant(String grantType, TokenRequest tokenRequest) {
-        // Kiểm tra xem grant_type gửi lên có phải là 'seller' hoặc 'custom' không
-        if (!SecurityConstant.GRANT_TYPE_CUSTOM.equalsIgnoreCase(grantType) &&
-                !SecurityConstant.GRANT_TYPE_SELLER.equalsIgnoreCase(grantType)) {
-            return null;
-        }
-        return super.grant(grantType, tokenRequest);
-    }
 
     @Override
     protected OAuth2Authentication getOAuth2Authentication(ClientDetails client, TokenRequest tokenRequest) {
-        String grantType = tokenRequest.getGrantType();
-
-        // Logic dành riêng cho GRANT_TYPE_SELLER (kind = 3)
-        if (SecurityConstant.GRANT_TYPE_SELLER.equalsIgnoreCase(grantType)) {
-            Map<String, String> parameters = tokenRequest.getRequestParameters();
-            String identifier = parameters.get("username"); // username can be username, email or phone
-            String password = parameters.get("password");
-
-            // Xác thực seller (kind = 3)
-            Authentication userAuth = userService.authenticateSeller(identifier, password);
-            OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
-
-            return new OAuth2Authentication(storedOAuth2Request, userAuth);
-        }
-
-        // Mặc định gọi super cho các trường hợp khác
         return super.getOAuth2Authentication(client, tokenRequest);
     }
 
@@ -67,7 +42,18 @@ public class CustomTokenGranter extends AbstractTokenGranter {
     protected OAuth2AccessToken getAccessToken(ClientDetails client, TokenRequest tokenRequest) {
         String grantType = tokenRequest.getGrantType();
 
-        // Logic dành riêng cho GRANT_TYPE_CUSTOM
+        // Logic GRANT_TYPE_SELLER (username can phone, email, username)
+        if (SecurityConstant.GRANT_TYPE_SELLER.equalsIgnoreCase(grantType)) {
+            Map<String, String> parameters = tokenRequest.getRequestParameters();
+            String username = parameters.get("username");
+            String password = parameters.get("password");
+
+            Authentication userAuth = userService.authenticateSeller(username, password);
+            OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
+            OAuth2Authentication auth = new OAuth2Authentication(storedOAuth2Request, userAuth);
+            return this.getTokenServices().createAccessToken(auth);
+        }
+
         if (SecurityConstant.GRANT_TYPE_CUSTOM.equalsIgnoreCase(grantType)) {
             String identifier = tokenRequest.getRequestParameters().get("username");
             String password = tokenRequest.getRequestParameters().get("password");
@@ -80,8 +66,6 @@ public class CustomTokenGranter extends AbstractTokenGranter {
             }
         }
 
-        // Nếu là grant_type 'seller', nó sẽ chạy qua hàm getOAuth2Authentication ở trên
-        // và tự động tạo token qua AbstractTokenGranter.
         return super.getAccessToken(client, tokenRequest);
     }
 }
