@@ -36,7 +36,7 @@ public class CustomTokenEnhancer implements TokenEnhancer {
             additionalInfo = getAdditionalInfo(null, username, grantType, null);
         }
         else if(SecurityConstant.GRANT_TYPE_USER.equals(grantType)){
-            additionalInfo = getAdditionalInfoCustom(null, username, SecurityConstant.GRANT_TYPE_USER,null);
+            additionalInfo = getAdditionalInforUser(null, username, SecurityConstant.GRANT_TYPE_USER,null);
         } else {
             additionalInfo = getAdditionalInfoCustom(null, username, grantType, null);
         }

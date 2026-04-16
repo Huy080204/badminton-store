@@ -11,46 +11,6 @@
             <where>name = 'ROLE SELLER'</where>
         </update>
     </changeSet>
-    <changeSet id="1776058061003-4" author="Authentication">
-        <insert tableName="db_mgr_account">
-            <column name="id" valueNumeric="11"/>
-            <column name="kind" valueNumeric="1"/>
-            <column name="username" value="admin"/>
-            <column name="email" value="user@gmail.com"/>
-            <column name="phone" value="0123456789"/> <column name="password" value="{bcrypt}$2a$10$YMZFAA1FLQQzz29qLCtHG.8oBvq0g/6tpX0ODh269rckAU9lsgrrS"/>
-            <column name="full_name" value="Super Admin"/>
-
-            <column name="last_login" valueComputed="NULL"/>
-            <column name="avatar_path" valueComputed="NULL"/>
-            <column name="reset_pwd_code" valueComputed="NULL"/>
-            <column name="reset_pwd_time" valueComputed="NULL"/>
-
-            <column name="attempt_forget_pwd" valueNumeric="0"/>
-            <column name="attempt_login" valueNumeric="0"/>
-            <column name="is_super_admin" valueBoolean="true"/>
-            <column name="group_id" valueNumeric="1"/>
-
-            <column name="created_by" value="Admin"/>
-            <column name="created_date" valueDate="2026-01-09T05:51:51"/>
-            <column name="modified_by" value="Admin"/>
-            <column name="modified_date" valueDate="2026-01-09T05:51:55"/>
-            <column name="status" valueNumeric="1"/>
-        </insert>
-    </changeSet>
-    <changeSet author="Authentication" id="1776058061003-2">
-        <insert tableName="db_mgr_user">
-            <column name="id" valueNumeric="11"/>
-
-            <column name="created_by" value="Admin"/>
-            <column name="created_date" valueDate="2026-01-09T05:51:51"/>
-            <column name="modified_by" value="Admin"/>
-            <column name="modified_date" valueDate="2026-01-09T05:51:55"/>
-
-            <column name="status" valueNumeric="1"/>
-
-            <column name="date_of_birth" valueDate="1995-01-01T00:00:00"/>
-            <column name="gender" valueNumeric="1"/> </insert>
-    </changeSet>
     <changeSet author="Authentication" id="1776058061003-3">
         <update tableName="oauth_client_details">
             <column name="authorized_grant_types"
