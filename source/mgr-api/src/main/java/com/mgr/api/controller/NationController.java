@@ -78,28 +78,23 @@ public class NationController extends ABasicController{
     @PostMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('NAT_U')")
     public ApiMessageDto<Void> update(@PathVariable Long id, @Valid @RequestBody UpdateNationForm form, BindingResult bindingResult){
-        Nation nation = nationRepository.findById(id)
+        Nation nation = nationRepository.findById(form.getId())
                 .orElseThrow(()-> new NotFoundException("Resource Not Found"));
-        //The parent shouldn't be themselves - a contradiction.
-        if( form.getParentId()!=null && form.getParentId().equals(id)){
-            throw new BadRequestException("Do not bury itself as the parent unit");
-        }
-
         //Same logic create
         Nation parent = null;
         String trimmedName = form.getName().trim();
         if (nation.getKind().equals(NATION_KIND_PROVINCE)) {
             // If it is currently a Province, it is not permitted to transfer ownership to someone else's child.
-            if (form.getParentId() != null) {
+            if (nation.getParent().getId()!= null) {
                 throw new BadRequestException("A first-level unit (province) cannot have a parent unit.");
             }
         } else {
             // If it's a District/Commune, a new parentId is required.
-            if (form.getParentId() == null) {
+            if (nation.getParent().getId() == null) {
                 throw new BadRequestException("The current rank requires a parent unit.");
             }
 
-            parent = nationRepository.findById(form.getParentId())
+            parent = nationRepository.findById(nation.getParent().getId())
                     .orElseThrow(() -> new NotFoundException("No new parent unit found."));
 
             if (nation.getKind() != parent.getKind() + 1) {
