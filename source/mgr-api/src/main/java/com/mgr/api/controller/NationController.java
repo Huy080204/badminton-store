@@ -21,7 +21,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import com.mgr.api.constant.MgrConstant;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.validation.Valid;
+import java.util.List;
+
+import static com.mgr.api.constant.MgrConstant.NATION_KIND_PROVINCE;
 
 @RestController
 @RequestMapping("/v1/nation")
@@ -38,28 +44,28 @@ public class NationController extends ABasicController{
     @PreAuthorize("hasRole('NAT_C')")
     public ApiMessageDto<Void> create(@Valid @RequestBody CreateNationForm form, BindingResult bindingResult){
         Nation parent = null;
-        //Khi form truyền lên kind là 1(tỉnh) tức đã ở nation cao nhất vì vậy thì sẽ không có parentId của nation cha.
+        //When the form is passed, the kind is 1 (province), meaning it's already in the highest nation, so there will be no parent ID of the parent nation.
         if(form.getKind() == 1){
             if(form.getParentId() != null){
-                throw new BadRequestException("Tỉnh cấp 1 nên không có Parent ID");
+                throw new BadRequestException("Province is highest level, it haven't parent");
             }
         }
         else {
             if(form.getParentId() == null){
-                throw new BadRequestException("Cấp bậc này bắt buộc có thông tin parentId của nation cha");
+                throw new BadRequestException("This kind must have father parent");
             }
             parent = nationRepository.findById(form.getParentId())
-                    .orElseThrow(()-> new NotFoundException("Không tìm thấy parentId"));
-            // Cấp con phải bằng cấp cha +1
+                    .orElseThrow(()-> new NotFoundException("ParentId Not Found"));
+            // The child's rank must be equal to the father's rank + 1.
             if(form.getKind() != parent.getKind() +1 ){
-                throw new BadRequestException("Cấp bậc không logic với đơn vị cha đã chọn");
+                throw new BadRequestException("Kind not match selected father parent");
             }
         }
 
-        // 2. Kiểm tra trùng tên trong cùng một khu vực, vi du 1 tinh se khong co 2 huyen cung ten
+        // 2. Check for duplicate names within the same area; for example, a province cannot have two districts with the same name.
         boolean isDuplicate = nationRepository.existsByNameAndParent(form.getName(), parent);
         if (isDuplicate) {
-            throw new BadRequestException("Tên đơn vị này đã tồn tại trong khu vực này");
+            throw new BadRequestException("Parent Name have existed");
         }
 
         Nation nation = nationMapper.fromCreateFormToEntity(form);
@@ -73,39 +79,41 @@ public class NationController extends ABasicController{
     @PreAuthorize("hasRole('NAT_U')")
     public ApiMessageDto<Void> update(@PathVariable Long id, @Valid @RequestBody UpdateNationForm form, BindingResult bindingResult){
         Nation nation = nationRepository.findById(form.getId())
-                .orElseThrow(()-> new NotFoundException("Khong tim thay ban ghi"));
-        //Parent khong duoc la chinh no - chong lap
+                .orElseThrow(()-> new NotFoundException("Resource Not Found"));
+        //The parent shouldn't be themselves - a contradiction.
         if( form.getParentId()!=null && form.getParentId().equals(id)){
-            throw new BadRequestException("Khong chon chinh no lam don vi cha");
+            throw new BadRequestException("Do not bury itself as the parent unit");
         }
 
-        //Logic tuong tu create
+        //Same logic create
         Nation parent = null;
         String trimmedName = form.getName().trim();
-        if (nation.getKind() == 1) {
-            // Nếu hiện tại là Tỉnh, không được phép chuyển thành con của ai khác
+        if (nation.getKind().equals(NATION_KIND_PROVINCE)) {
+            // If it is currently a Province, it is not permitted to transfer ownership to someone else's child.
             if (form.getParentId() != null) {
-                throw new BadRequestException("Đơn vị cấp 1 (Tỉnh) không thể có đơn vị cha");
+                throw new BadRequestException("A first-level unit (province) cannot have a parent unit.");
             }
         } else {
-            // Nếu là Huyện/Xã, bắt buộc phải có parentId mới
+            // If it's a District/Commune, a new parentId is required.
             if (form.getParentId() == null) {
-                throw new BadRequestException("Cấp bậc hiện tại bắt buộc phải có đơn vị cha");
+                throw new BadRequestException("The current rank requires a parent unit.");
             }
 
             parent = nationRepository.findById(form.getParentId())
-                    .orElseThrow(() -> new NotFoundException("Không tìm thấy đơn vị cha mới"));
+                    .orElseThrow(() -> new NotFoundException("No new parent unit found."));
 
             if (nation.getKind() != parent.getKind() + 1) {
-                throw new BadRequestException("Đơn vị cha mới không phù hợp với cấp bậc hiện tại");
+                throw new BadRequestException("The new father's unit is not compatible with the current rank.");
             }
         }
 
-        //Kiem tra trung ten trong cung khu vuc (loai tru ID hien tai)
-        if (nationRepository.existsByNameAndParentAndIdNot(trimmedName, parent, id)) {
-            throw new BadRequestException("Tên đơn vị này đã tồn tại trong khu vực được chọn");
+        //Check for duplicate names within the same area (excluding current IDs).
+        if (!trimmedName.equalsIgnoreCase(nation.getName()) || (parent != null && !parent.equals(nation.getParent())) || (parent == null && nation.getParent() != null)) {
+            if (nationRepository.existsByNameAndParentAndIdNot(trimmedName, parent, id)) {
+                throw new BadRequestException("This unit's name already exists in the selected area.");
+            }
         }
-        //Do chi can setName, nen em khong dung mapper
+        //Since I only need to set the name, I don't need to use a mapper.
         nation.setName(trimmedName);
         nation.setParent(parent);
         nationRepository.save(nation);
@@ -137,16 +145,21 @@ public class NationController extends ABasicController{
 
     @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('NAT_D')")
+    @Transactional
     public ApiMessageDto<Void> delete(@PathVariable("id") Long id) {
         Nation nation = nationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Nation not found"));
-        if (nationRepository.existsByParent(nation)) {
-            throw new BadRequestException("Nation has children, cannot delete");
-        }
-        nationRepository.delete(nation);
+        hardDeleteRecursive(nation);
         return makeSuccessResponse("Delete Success");
     }
 
-
-
+    private void hardDeleteRecursive(Nation nation){
+        List<Nation> children = nationRepository.findByParent(nation);
+        if(children != null && !children.isEmpty()){
+            for(Nation child : children){
+                hardDeleteRecursive(child);
+            }
+        }
+        nationRepository.hardDeleteById(nation.getId());
+    }
 }
