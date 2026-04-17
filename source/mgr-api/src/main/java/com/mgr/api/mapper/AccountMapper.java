@@ -3,6 +3,7 @@ package com.mgr.api.mapper;
 import com.mgr.api.dto.account.AccountAutoCompleteDto;
 import com.mgr.api.dto.account.AccountDto;
 import com.mgr.api.form.account.CreateAccountAdminForm;
+import com.mgr.api.form.account.RegistrationSellerForm;
 import com.mgr.api.form.account.UpdateAccountAdminForm;
 import com.mgr.api.model.Account;
 import org.mapstruct.*;
@@ -39,6 +40,10 @@ public interface AccountMapper {
     @Mapping(source = "fullName", target = "fullName")
     @Named("fromAccountToAutoCompleteDto")
     AccountAutoCompleteDto fromAccountToAutoCompleteDto(Account account);
+
+    @Mapping(target = "password", ignore = true)
+    Account fromRegistrationSellerFormToEntity(RegistrationSellerForm form);
+
 
     @IterableMapping(elementTargetType = AccountAutoCompleteDto.class)
     List<AccountAutoCompleteDto> convertAccountToAutoCompleteDto(List<Account> list);

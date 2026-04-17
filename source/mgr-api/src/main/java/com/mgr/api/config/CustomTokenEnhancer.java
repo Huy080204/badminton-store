@@ -30,14 +30,23 @@ public class CustomTokenEnhancer implements TokenEnhancer {
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
         Map<String, Object> additionalInfo;
-        String grantType = authentication.getOAuth2Request().getRequestParameters().get("grant_type");
+        String grantType = authentication.getOAuth2Request().getGrantType();
+        if (grantType == null) {
+            grantType = authentication.getOAuth2Request().getRequestParameters().get("grant_type");
+        }
+        if (grantType == null) {
+            grantType = authentication.getOAuth2Request().getRequestParameters().get("grantType");
+        }
+
         String username = authentication.getName();
         if (SecurityConstant.GRANT_TYPE_PASSWORD.equals(grantType)) {
             additionalInfo = getAdditionalInfo(null, username, grantType, null);
         }
         else if(SecurityConstant.GRANT_TYPE_USER.equals(grantType)){
             additionalInfo = getAdditionalInforUser(null, username, SecurityConstant.GRANT_TYPE_USER,null);
-        } else {
+        } else if(SecurityConstant.GRANT_TYPE_SELLER.equals(grantType)){
+            additionalInfo = getAdditionalInforSeller(null, username, SecurityConstant.GRANT_TYPE_SELLER,null);
+        }else {
             additionalInfo = getAdditionalInfoCustom(null, username, grantType, null);
         }
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
@@ -133,6 +142,42 @@ public class CustomTokenEnhancer implements TokenEnhancer {
             additionalInfo.put("user_id", accountId);
             additionalInfo.put("user_kind", a.getKind());
             additionalInfo.put("grant_type", SecurityConstant.GRANT_TYPE_USER);
+            additionalInfo.put("tenant_info", tenantId);
+            String DELIM = "|";
+            String additionalInfoStr = ZipUtils.zipString(accountId + DELIM
+                    + storeId + DELIM
+                    + kind + DELIM
+                    + permission + DELIM
+                    + deviceId + DELIM
+                    + userKind + DELIM
+                    + username + DELIM
+                    + tabletKind + DELIM
+                    + orderId + DELIM
+                    + isSuperAdmin + DELIM
+                    + tenantId);
+            additionalInfo.put("additional_info", additionalInfoStr);
+        }
+        return additionalInfo;
+    }
+
+    private Map<String, Object> getAdditionalInforSeller(String tenantName, String username, String grantType, Long userId) {
+        Map<String, Object> additionalInfo = new HashMap<>();
+        AccountForTokenDto a = getAccountByUsername(username);
+
+        if (a != null) {
+            Long accountId = a.getId();
+            Long storeId = -1L;
+            String kind = a.getKind() + ""; //token kind
+            Long deviceId = -1L; // id cua thiet bi, lưu ở table device để get firebase url..
+            String permission = "<>"; //empty string
+            Integer userKind = a.getKind(); // seller
+            Integer tabletKind = -1;
+            Long orderId = -1L;
+            Boolean isSuperAdmin = a.getIsSuperAdmin();
+            String tenantId = "";
+            additionalInfo.put("user_id", accountId);
+            additionalInfo.put("user_kind", a.getKind());
+            additionalInfo.put("grant_type", SecurityConstant.GRANT_TYPE_SELLER);
             additionalInfo.put("tenant_info", tenantId);
             String DELIM = "|";
             String additionalInfoStr = ZipUtils.zipString(accountId + DELIM

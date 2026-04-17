@@ -12,5 +12,5 @@ public interface GroupRepository extends JpaRepository<Group, Long>, JpaSpecific
     Optional<Group> findByIdAndIsSystemRole(Long id, Boolean isSystemRole);
 
     Optional<Group> findByName(String name);
-    Optional<Group> findFirstByKind(Integer kind);
+    Group findFirstByKind(Integer kind);
 }

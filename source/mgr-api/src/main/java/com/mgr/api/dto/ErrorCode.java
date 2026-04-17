@@ -44,6 +44,10 @@ public class ErrorCode {
     public static final String USER_ERROR_PERMISSION_CREATE = "ERROR-USER-0004";
     public static final String USER_ERROR_PERMISSION_UPDATE = "ERROR-USER-0005";
     public static final String USER_ERROR_PERMISSION_GET = "ERROR-USER-0006";
+    /**
+     * Seller error code
+     */
+    public static final String SELLER_ERROR_EXISTED = "ERROR-SELLER-0000";
 
     public static final String CATEGORY_ERROR_NOT_FOUND = "ERROR-CATEGORY-0001";
     public static final String ERROR_INVALID_FORM = "ERROR-FORM-0001";
