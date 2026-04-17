@@ -34,8 +34,10 @@ public class CustomTokenEnhancer implements TokenEnhancer {
         String username = authentication.getName();
         if (SecurityConstant.GRANT_TYPE_PASSWORD.equals(grantType)) {
             additionalInfo = getAdditionalInfo(null, username, grantType, null);
-        } else if (SecurityConstant.GRANT_TYPE_SELLER.equals(grantType)) {
-            additionalInfo = getAdditionalForSeller(null, username, grantType, null);
+        }  else if(SecurityConstant.GRANT_TYPE_USER.equals(grantType)){
+            additionalInfo = getAdditionalInforUser(null, username, SecurityConstant.GRANT_TYPE_USER,null);
+        } else if(SecurityConstant.GRANT_TYPE_SELLER.equals(grantType)){
+            additionalInfo = getAdditionalInforSeller(null, username, SecurityConstant.GRANT_TYPE_SELLER,null);
         }else {
             additionalInfo = getAdditionalInfoCustom(null, username, grantType, null);
         }
@@ -114,7 +116,7 @@ public class CustomTokenEnhancer implements TokenEnhancer {
         }
         return additionalInfo;
     }
-    private Map<String, Object> getAdditionalForSeller(String tenantName, String username, String grantType, Long userId) {
+    private Map<String, Object> getAdditionalInforUser(String tenantName, String username, String grantType, Long userId) {
         Map<String, Object> additionalInfo = new HashMap<>();
         AccountForTokenDto a = getAccountByUsername(username);
 
@@ -131,9 +133,8 @@ public class CustomTokenEnhancer implements TokenEnhancer {
             String tenantId = "";
             additionalInfo.put("user_id", accountId);
             additionalInfo.put("user_kind", a.getKind());
-            additionalInfo.put("grant_type", grantType == null ? SecurityConstant.GRANT_TYPE_SELLER : grantType);
+            additionalInfo.put("grant_type", SecurityConstant.GRANT_TYPE_USER);
             additionalInfo.put("tenant_info", tenantId);
-            additionalInfo.put("user_name", username);
             String DELIM = "|";
             String additionalInfoStr = ZipUtils.zipString(accountId + DELIM
                     + storeId + DELIM
@@ -147,9 +148,42 @@ public class CustomTokenEnhancer implements TokenEnhancer {
                     + isSuperAdmin + DELIM
                     + tenantId);
             additionalInfo.put("additional_info", additionalInfoStr);
-        } else {
-            additionalInfo.put("grant_type", grantType == null ? SecurityConstant.GRANT_TYPE_SELLER : grantType);
-            additionalInfo.put("error", "Seller account not found or inactive.");
+        }
+        return additionalInfo;
+    }
+
+    private Map<String, Object> getAdditionalInforSeller(String tenantName, String username, String grantType, Long userId) {
+        Map<String, Object> additionalInfo = new HashMap<>();
+        AccountForTokenDto a = getAccountByUsername(username);
+
+        if (a != null) {
+            Long accountId = a.getId();
+            Long storeId = -1L;
+            String kind = a.getKind() + ""; //token kind
+            Long deviceId = -1L; // id cua thiet bi, lưu ở table device để get firebase url..
+            String permission = "<>"; //empty string
+            Integer userKind = a.getKind(); // seller
+            Integer tabletKind = -1;
+            Long orderId = -1L;
+            Boolean isSuperAdmin = a.getIsSuperAdmin();
+            String tenantId = "";
+            additionalInfo.put("user_id", accountId);
+            additionalInfo.put("user_kind", a.getKind());
+            additionalInfo.put("grant_type", SecurityConstant.GRANT_TYPE_SELLER);
+            additionalInfo.put("tenant_info", tenantId);
+            String DELIM = "|";
+            String additionalInfoStr = ZipUtils.zipString(accountId + DELIM
+                    + storeId + DELIM
+                    + kind + DELIM
+                    + permission + DELIM
+                    + deviceId + DELIM
+                    + userKind + DELIM
+                    + username + DELIM
+                    + tabletKind + DELIM
+                    + orderId + DELIM
+                    + isSuperAdmin + DELIM
+                    + tenantId);
+            additionalInfo.put("additional_info", additionalInfoStr);
         }
         return additionalInfo;
     }

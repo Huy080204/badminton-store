@@ -1,16 +1,28 @@
 package com.mgr.api.dto.user;
-
 import com.mgr.api.dto.ABasicAdminDto;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
 public class UserDto extends ABasicAdminDto {
-    private String username;
-    private String fullName;
+    //ABasic
+    @ApiModelProperty(name = "id")
+    private Long id;
+    @ApiModelProperty(name = "status")
+    private Integer status;
+    @ApiModelProperty(name = "phone")
+    private String phone;
+    @ApiModelProperty(name = "email")
     private String email;
+    @ApiModelProperty(name = "fullName")
+    private String fullName;
+    @ApiModelProperty(name = "lastLogin")
+    private Date lastLogin;
+    @ApiModelProperty(name = "avatar")
+    private String avatar;
+    @ApiModelProperty(name = "gender")
     private Integer gender;
-    private Date dateOfBirth;
-    private String avatarPath;
+
 }

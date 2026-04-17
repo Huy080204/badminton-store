@@ -102,7 +102,7 @@ public class CategoryController extends ABasicController {
     @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('CAT_D')")
     @Transactional
-    public ApiMessageDto<String> delete(@PathVariable("id") Long id) {
+    public ApiMessageDto<Void> delete(@PathVariable("id") Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Category not found", ErrorCode.CATEGORY_ERROR_NOT_FOUND));
         category.setStatus(MgrConstant.STATUS_DELETE);

@@ -224,17 +224,16 @@ public class UserServiceImpl implements UserDetailsService {
     public MgrJwt getAddInfoFromToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            if (authentication.getDetails() instanceof OAuth2AuthenticationDetails) {
-                OAuth2AuthenticationDetails oauthDetails = (OAuth2AuthenticationDetails) authentication.getDetails();
-                Object decodedDetailsObj = oauthDetails.getDecodedDetails();
-                if (decodedDetailsObj instanceof Map) {
-                    Map<String, Object> map = (Map<String, Object>) decodedDetailsObj;
-                    String encodedData = (String) map.get("additional_info");
-                    //idStr -> json
-                    if (encodedData != null && !encodedData.isEmpty()) {
-                        return MgrJwt.decode(encodedData);
-                    }
+            OAuth2AuthenticationDetails oauthDetails =
+                    (OAuth2AuthenticationDetails) authentication.getDetails();
+            if (oauthDetails != null) {
+                Map<String, Object> map = (Map<String, Object>) oauthDetails.getDecodedDetails();
+                String encodedData = (String) map.get("additional_info");
+                //idStr -> json
+                if (encodedData != null && !encodedData.isEmpty()) {
+                    return MgrJwt.decode(encodedData);
                 }
+                return null;
             }
         }
         return null;

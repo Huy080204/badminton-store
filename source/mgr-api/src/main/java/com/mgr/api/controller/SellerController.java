@@ -53,7 +53,7 @@ public class SellerController extends ABasicController {
                 .orElseThrow(() -> new NotFoundException("Account not found", ErrorCode.ACCOUNT_ERROR_NOT_FOUND));
 
         if (sellerRepository.findById(accountId).isPresent()) {
-            throw new BadRequestException("Seller profile already exists", ErrorCode.USER_ERROR_EXISTED);
+            throw new BadRequestException("Seller profile already exists", ErrorCode.SELLER_ERROR_EXISTED);
         }
 
         Seller seller = sellerMapper.fromCreateFormToEntity(createSellerForm);
@@ -67,7 +67,7 @@ public class SellerController extends ABasicController {
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('SEL_U')")
     @Transactional
-    public ApiMessageDto<String> update(@Valid @RequestBody UpdateSellerForm updateSellerForm, BindingResult bindingResult) {
+    public ApiMessageDto<Void> update(@Valid @RequestBody UpdateSellerForm updateSellerForm, BindingResult bindingResult) {
         Seller seller = sellerRepository.findById(updateSellerForm.getId())
                 .orElseThrow(() -> new NotFoundException("Seller profile not found", ErrorCode.USER_ERROR_NOT_FOUND));
 
@@ -78,7 +78,7 @@ public class SellerController extends ABasicController {
 
     @PutMapping(value = "/update-profile", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ApiMessageDto<String> updateProfile(@Valid @RequestBody UpdateSellerProfileForm updateSellerProfileForm, BindingResult bindingResult) {
+    public ApiMessageDto<Void> updateProfile(@Valid @RequestBody UpdateSellerProfileForm updateSellerProfileForm, BindingResult bindingResult) {
         Long sellerId = getCurrentUser();
         Seller seller = sellerRepository.findById(sellerId)
                 .orElseThrow(() -> new NotFoundException("Seller profile not found", ErrorCode.USER_ERROR_NOT_FOUND));
@@ -110,7 +110,7 @@ public class SellerController extends ABasicController {
     @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('SEL_D')")
     @Transactional
-    public ApiMessageDto<String> delete(@PathVariable("id") Long id) {
+    public ApiMessageDto<Void> delete(@PathVariable("id") Long id) {
         Seller seller = sellerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Seller profile not found", ErrorCode.USER_ERROR_NOT_FOUND));
 
