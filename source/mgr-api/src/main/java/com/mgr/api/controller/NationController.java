@@ -78,7 +78,7 @@ public class NationController extends ABasicController{
     @PostMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('NAT_U')")
     public ApiMessageDto<Void> update(@PathVariable Long id, @Valid @RequestBody UpdateNationForm form, BindingResult bindingResult){
-        Nation nation = nationRepository.findById(form.getId())
+        Nation nation = nationRepository.findById(id)
                 .orElseThrow(()-> new NotFoundException("Resource Not Found"));
         //The parent shouldn't be themselves - a contradiction.
         if( form.getParentId()!=null && form.getParentId().equals(id)){
@@ -109,9 +109,7 @@ public class NationController extends ABasicController{
 
         //Check for duplicate names within the same area (excluding current IDs).
         if (!trimmedName.equalsIgnoreCase(nation.getName()) || (parent != null && !parent.equals(nation.getParent())) || (parent == null && nation.getParent() != null)) {
-            if (nationRepository.existsByNameAndParentAndIdNot(trimmedName, parent, id)) {
-                throw new BadRequestException("This unit's name already exists in the selected area.");
-            }
+            throw new BadRequestException("This unit's name already exists in the selected area.");
         }
         //Since I only need to set the name, I don't need to use a mapper.
         nation.setName(trimmedName);
@@ -149,17 +147,16 @@ public class NationController extends ABasicController{
     public ApiMessageDto<Void> delete(@PathVariable("id") Long id) {
         Nation nation = nationRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Nation not found"));
-        hardDeleteRecursive(nation);
-        return makeSuccessResponse("Delete Success");
-    }
-
-    private void hardDeleteRecursive(Nation nation){
-        List<Nation> children = nationRepository.findByParent(nation);
-        if(children != null && !children.isEmpty()){
-            for(Nation child : children){
-                hardDeleteRecursive(child);
-            }
+        if (nation.getKind().equals(MgrConstant.NATION_KIND_PROVINCE)) {
+            //Delete commune
+            nationRepository.deleteGrandchildrenByProvinceId(nation.getId());
+            //Delete district
+            nationRepository.deleteByParentId(nation.getId());
+        } else if (nation.getKind().equals(MgrConstant.NATION_KIND_DISTRICT)) {
+            nationRepository.deleteByParentId(nation.getId());
         }
-        nationRepository.hardDeleteById(nation.getId());
+        //Delete province
+        nationRepository.deleteById(nation.getId());
+        return makeSuccessResponse("Delete Success");
     }
 }
