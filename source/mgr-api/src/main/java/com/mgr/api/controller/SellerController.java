@@ -46,7 +46,7 @@ public class SellerController extends ABasicController {
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('SEL_C')")
     @Transactional
-    public ApiMessageDto<String> create(@Valid @RequestBody CreateSellerForm createSellerForm, BindingResult bindingResult) {
+    public ApiMessageDto<Void> create(@Valid @RequestBody CreateSellerForm createSellerForm, BindingResult bindingResult) {
         Long accountId = getCurrentUser();
 
         Account account = accountRepository.findById(accountId)
@@ -64,11 +64,11 @@ public class SellerController extends ABasicController {
         return makeSuccessResponse(null, "Seller profile created successfully");
     }
 
-    @PutMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('SEL_U')")
     @Transactional
-    public ApiMessageDto<String> update(@PathVariable("id") Long id, @Valid @RequestBody UpdateSellerForm updateSellerForm, BindingResult bindingResult) {
-        Seller seller = sellerRepository.findById(id)
+    public ApiMessageDto<String> update(@Valid @RequestBody UpdateSellerForm updateSellerForm, BindingResult bindingResult) {
+        Seller seller = sellerRepository.findById(updateSellerForm.getId())
                 .orElseThrow(() -> new NotFoundException("Seller profile not found", ErrorCode.USER_ERROR_NOT_FOUND));
 
         sellerMapper.mappingUpdateFormToEntity(updateSellerForm, seller);

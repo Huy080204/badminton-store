@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserDetailsService {
                                                      String grantType,
                                                      AuthorizationServerTokenServices tokenServices) throws GeneralSecurityException, IOException {
         Map<String, String> requestParameters = new HashMap<>();
-        requestParameters.put("grantType", grantType);
+        requestParameters.put("grant_type", grantType);
         requestParameters.put("tenantId", tenant);
         String clientId = client.getClientId();
         boolean approved = true;
@@ -105,20 +105,113 @@ public class UserServiceImpl implements UserDetailsService {
         return tokenServices.createAccessToken(auth);
     }
 
-    public Authentication authenticateSeller(String username, String password) {
-        // Tìm Account Seller (kind = 3) bằng username, email hoặc phone
-        Account account = accountRepository.findByIdentifier(username).orElse(null);
+    public OAuth2AccessToken getAccessTokenForSeller(ClientDetails client,
+                                                     TokenRequest tokenRequest,
+                                                     String username,
+                                                     String password,
+                                                     String tenant,
+                                                     String grantType,
+                                                     AuthorizationServerTokenServices tokenServices) throws GeneralSecurityException, IOException {
+        Map<String, String> requestParameters = new HashMap<>();
+        requestParameters.put("grant_type", grantType);
+        requestParameters.put("tenantId", tenant);
+        String clientId = client.getClientId();
+        boolean approved = true;
+        Set<String> responseTypes = new HashSet<>();
+        responseTypes.add("code");
+        Map<String, Serializable> extensionProperties = new HashMap<>();
 
-        if (account == null || account.getKind() != MgrConstant.USER_KIND_SELLER) {
-            throw new BadCredentialsException("Invalid seller account");
+        Account account = accountRepository.findByUsernamePhoneEmail(username).orElse(null);
+        if (account == null) {
+            log.error("Invalid username or password.");
+            throw new UsernameNotFoundException("Invalid username or password.");
+        }
+
+        if (!passwordEncoder.matches(password, account.getPassword())) {
+            log.error("Invalid username or password.");
+            throw new UsernameNotFoundException("Invalid username or password.");
+        }
+
+        boolean enabled = true;
+        if (account.getStatus() != MgrConstant.STATUS_ACTIVE) {
+            log.error("User had been locked");
+            enabled = false;
+        }
+
+        Set<GrantedAuthority> grantedAuthorities = getAccountPermission(account);
+
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(account.getUsername(), account.getPassword(), enabled, true, true, true, grantedAuthorities);
+
+        OAuth2Request oAuth2Request = new OAuth2Request(requestParameters, clientId,
+                userDetails.getAuthorities(), approved, client.getScope(),
+                client.getResourceIds(), null, responseTypes, extensionProperties);
+        org.springframework.security.core.userdetails.User userPrincipal = new org.springframework.security.core.userdetails.User(userDetails.getUsername(), userDetails.getPassword(), userDetails.isEnabled(), userDetails.isAccountNonExpired(), userDetails.isCredentialsNonExpired(), userDetails.isAccountNonLocked(), userDetails.getAuthorities());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrincipal, null, userDetails.getAuthorities());
+        OAuth2Authentication auth = new OAuth2Authentication(oAuth2Request, authenticationToken);
+        return tokenServices.createAccessToken(auth);
+    }
+
+    public OAuth2AccessToken getAccessTokenForEmail(ClientDetails client,
+                                                    TokenRequest tokenRequest,
+                                                    String email,
+                                                    String password,
+                                                    String tenant,
+                                                    String grantType,
+                                                    AuthorizationServerTokenServices tokenServices) throws GeneralSecurityException, IOException {
+        Map<String, String> requestParameters = new HashMap<>();
+        requestParameters.put("grant_type", grantType);
+        requestParameters.put("tenantId", tenant);
+        String clientId = client.getClientId();
+        boolean approved = true;
+        Set<String> responseTypes = new HashSet<>();
+        responseTypes.add("code");
+        Map<String, Serializable> extensionProperties = new HashMap<>();
+
+        Account account = accountRepository.findFirstByEmail(email).orElse(null);
+        if (account == null) {
+            log.error("Invalid email or password.");
+            throw new UsernameNotFoundException("Invalid email or password.");
+        }
+
+        if (!passwordEncoder.matches(password, account.getPassword())) {
+            log.error("Invalid password.");
+            throw new UsernameNotFoundException("Invalid password.");
+        }
+
+        boolean enabled = true;
+        if (account.getStatus() != MgrConstant.STATUS_ACTIVE) {
+            log.error("User had been locked");
+            enabled = false;
+        }
+
+        Set<GrantedAuthority> grantedAuthorities = getAccountPermission(account);
+
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(account.getUsername(), account.getPassword(), enabled, true, true, true, grantedAuthorities);
+
+        OAuth2Request oAuth2Request = new OAuth2Request(requestParameters, clientId,
+                userDetails.getAuthorities(), approved, client.getScope(),
+                client.getResourceIds(), null, responseTypes, extensionProperties);
+        org.springframework.security.core.userdetails.User userPrincipal = new org.springframework.security.core.userdetails.User(userDetails.getUsername(), userDetails.getPassword(), userDetails.isEnabled(), userDetails.isAccountNonExpired(), userDetails.isCredentialsNonExpired(), userDetails.isAccountNonLocked(), userDetails.getAuthorities());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrincipal, null, userDetails.getAuthorities());
+        OAuth2Authentication auth = new OAuth2Authentication(oAuth2Request, authenticationToken);
+        return tokenServices.createAccessToken(auth);
+    }
+
+    public Authentication authenticateForUserType(String username, String password, int requiredKind) {
+        // Tìm Account
+        Account account = accountRepository.findByUsername(username);
+
+        if (account == null || account.getKind() != requiredKind) {
+            throw new BadCredentialsException("Invalid account or unauthorized kind");
         }
 
         if (!passwordEncoder.matches(password, account.getPassword())) {
             throw new BadCredentialsException("Invalid password");
         }
 
-        UserDetails userDetails = loadUserByUsername(account.getUsername());
+        UserDetails userDetails = loadUserByUsername(username);
 
+        // Trả về đối tượng Authentication đơn thuần
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
@@ -131,16 +224,17 @@ public class UserServiceImpl implements UserDetailsService {
     public MgrJwt getAddInfoFromToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            OAuth2AuthenticationDetails oauthDetails =
-                    (OAuth2AuthenticationDetails) authentication.getDetails();
-            if (oauthDetails != null) {
-                Map<String, Object> map = (Map<String, Object>) oauthDetails.getDecodedDetails();
-                String encodedData = (String) map.get("additional_info");
-                //idStr -> json
-                if (encodedData != null && !encodedData.isEmpty()) {
-                    return MgrJwt.decode(encodedData);
+            if (authentication.getDetails() instanceof OAuth2AuthenticationDetails) {
+                OAuth2AuthenticationDetails oauthDetails = (OAuth2AuthenticationDetails) authentication.getDetails();
+                Object decodedDetailsObj = oauthDetails.getDecodedDetails();
+                if (decodedDetailsObj instanceof Map) {
+                    Map<String, Object> map = (Map<String, Object>) decodedDetailsObj;
+                    String encodedData = (String) map.get("additional_info");
+                    //idStr -> json
+                    if (encodedData != null && !encodedData.isEmpty()) {
+                        return MgrJwt.decode(encodedData);
+                    }
                 }
-                return null;
             }
         }
         return null;

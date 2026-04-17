@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account, Long>, JpaSpecificationExecutor<Account> {
     Optional<Account> findFirstByUsername(String username);
 
-    Account findFirstByEmail(String email);
+    Optional<Account> findFirstByEmail(String email);
 
     Boolean existsByUsername(String username);
 
@@ -25,9 +25,11 @@ public interface AccountRepository extends JpaRepository<Account, Long>, JpaSpec
 
     Optional<Account> findFirstByPhone(String phone);
 
-    @Query("SELECT a FROM Account a WHERE a.username = :identifier OR a.email = :identifier OR a.phone = :identifier")
-    Optional<Account> findByIdentifier(@Param("identifier") String identifier);
+    @Query("SELECT a FROM Account a WHERE a.username = :username OR a.email = :username OR a.phone = :username")
+    Optional<Account> findByUsernamePhoneEmail(@Param("username") String username);
 
+
+    @Query("SELECT a FROM Account a WHERE a.username = :username OR a.phone = :phone")
     Optional<Account> findByUsernameOrPhone(@Param("username") String username, @Param("phone") String phone);
 
     Optional<Account> findByIdAndStatus(long id, Integer status);

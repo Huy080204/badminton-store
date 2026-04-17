@@ -120,7 +120,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 userService,
                 SecurityConstant.GRANT_TYPE_CUSTOM));
 
-        // Đăng ký cho loại 'seller'
+        // for seller
         granters.add(new CustomTokenGranter(
                 authenticationManager,
                 endpoints.getTokenServices(),

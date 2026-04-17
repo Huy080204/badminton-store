@@ -122,6 +122,27 @@ public class AccountController extends ABasicController {
         return apiMessageDto;
     }
 
+    @PutMapping(value = "/approve-seller/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
+    public ApiResponse<String> approveSeller(@PathVariable("id") Long id) {
+        ApiResponse<String> apiMessageDto = new ApiResponse<>();
+        if (!isSuperAdmin()) {
+            throw new BadRequestException("Can not approve seller", ErrorCode.ACCOUNT_ERROR_UNABLE_UPDATE);
+        }
+        Account account = accountRepository.findById(id).orElse(null);
+        if (account == null) {
+            throw new NotFoundException("Account not found!", ErrorCode.ACCOUNT_ERROR_NOT_FOUND);
+        }
+        if (account.getKind() != MgrConstant.USER_KIND_SELLER) {
+            throw new BadRequestException("Account is not a seller", ErrorCode.ACCOUNT_ERROR_UNABLE_UPDATE);
+        }
+        account.setStatus(MgrConstant.STATUS_ACTIVE);
+        accountRepository.save(account);
+
+        apiMessageDto.setMessage("Approve seller account success.");
+        return apiMessageDto;
+    }
+
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ACC_U')")
     public ApiResponse<String> updateAdmin(@Valid @RequestBody UpdateAccountAdminForm updateAccountAdminForm, BindingResult bindingResult) {
