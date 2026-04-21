@@ -6,12 +6,14 @@ public class MgrConstant {
 
     public static final Integer USER_KIND_ADMIN = 1;
     public static final Integer USER_KIND_USER = 2;
+    public static final Integer  USER_KIND_SELLER = 3;
+
+    public static final Long GROUP_ID_SELLER = 3L;
 
     public static final Integer STATUS_ACTIVE = 1;
     public static final Integer STATUS_PENDING = 0;
     public static final Integer STATUS_LOCK = -1;
     public static final Integer STATUS_DELETE = -2;
-
     private MgrConstant() {
         throw new IllegalStateException("Utility class");
     }

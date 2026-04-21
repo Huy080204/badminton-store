@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserDetailsService {
                                                      String grantType,
                                                      AuthorizationServerTokenServices tokenServices) throws GeneralSecurityException, IOException {
         Map<String, String> requestParameters = new HashMap<>();
-        requestParameters.put("grantType", grantType);
+        requestParameters.put("grant_type", grantType);
         requestParameters.put("tenantId", tenant);
         String clientId = client.getClientId();
         boolean approved = true;
@@ -105,6 +105,52 @@ public class UserServiceImpl implements UserDetailsService {
         return tokenServices.createAccessToken(auth);
     }
 
+    public OAuth2AccessToken getAccessTokenForSeller(ClientDetails client,
+                                                     TokenRequest tokenRequest,
+                                                     String username,
+                                                     String password,
+                                                     String tenant,
+                                                     String grantType,
+                                                     AuthorizationServerTokenServices tokenServices) throws GeneralSecurityException, IOException {
+        Map<String, String> requestParameters = new HashMap<>();
+        requestParameters.put("grant_type", grantType);
+        requestParameters.put("tenantId", tenant);
+        String clientId = client.getClientId();
+        boolean approved = true;
+        Set<String> responseTypes = new HashSet<>();
+        responseTypes.add("code");
+        Map<String, Serializable> extensionProperties = new HashMap<>();
+
+        Account account = accountRepository.findByUsernamePhoneEmail(username).orElse(null);
+        if (account == null) {
+            log.error("Invalid username or password.");
+            throw new UsernameNotFoundException("Invalid username or password.");
+        }
+
+        if (!passwordEncoder.matches(password, account.getPassword())) {
+            log.error("Invalid username or password.");
+            throw new UsernameNotFoundException("Invalid username or password.");
+        }
+
+        boolean enabled = true;
+        if (account.getStatus() != MgrConstant.STATUS_ACTIVE) {
+            log.error("User had been locked");
+            enabled = false;
+        }
+
+        Set<GrantedAuthority> grantedAuthorities = getAccountPermission(account);
+
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(account.getUsername(), account.getPassword(), enabled, true, true, true, grantedAuthorities);
+
+        OAuth2Request oAuth2Request = new OAuth2Request(requestParameters, clientId,
+                userDetails.getAuthorities(), approved, client.getScope(),
+                client.getResourceIds(), null, responseTypes, extensionProperties);
+        org.springframework.security.core.userdetails.User userPrincipal = new org.springframework.security.core.userdetails.User(userDetails.getUsername(), userDetails.getPassword(), userDetails.isEnabled(), userDetails.isAccountNonExpired(), userDetails.isCredentialsNonExpired(), userDetails.isAccountNonLocked(), userDetails.getAuthorities());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrincipal, null, userDetails.getAuthorities());
+        OAuth2Authentication auth = new OAuth2Authentication(oAuth2Request, authenticationToken);
+        return tokenServices.createAccessToken(auth);
+    }
+
     public OAuth2AccessToken getAccessTokenForEmail(ClientDetails client,
                                                     TokenRequest tokenRequest,
                                                     String email,
@@ -113,7 +159,7 @@ public class UserServiceImpl implements UserDetailsService {
                                                     String grantType,
                                                     AuthorizationServerTokenServices tokenServices) throws GeneralSecurityException, IOException {
         Map<String, String> requestParameters = new HashMap<>();
-        requestParameters.put("grantType", grantType);
+        requestParameters.put("grant_type", grantType);
         requestParameters.put("tenantId", tenant);
         String clientId = client.getClientId();
         boolean approved = true;

@@ -63,6 +63,7 @@ public class GroupController extends ABasicController {
             }
         }
         group.setPermissions(permissions);
+        group.setKind(createGroupForm.getKind());
         groupRepository.save(group);
         apiMessageDto.setMessage("Create a new group success.");
         return apiMessageDto;

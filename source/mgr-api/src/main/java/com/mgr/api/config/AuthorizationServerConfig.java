@@ -119,6 +119,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 endpoints.getOAuth2RequestFactory(),
                 userService,
                 SecurityConstant.GRANT_TYPE_CUSTOM));
+
         // Đăng ký cho loại 'user' (Dùng chung class nhưng khai báo type khác)
         granters.add(new CustomTokenGranter(
                 authenticationManager,
@@ -127,6 +128,14 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 endpoints.getOAuth2RequestFactory(),
                 userService,
                 SecurityConstant.GRANT_TYPE_USER));
+        // for seller
+        granters.add(new CustomTokenGranter(
+                authenticationManager,
+                endpoints.getTokenServices(),
+                endpoints.getClientDetailsService(),
+                endpoints.getOAuth2RequestFactory(),
+                userService,
+                SecurityConstant.GRANT_TYPE_SELLER));
 
         return new CompositeTokenGranter(granters);
     }
