@@ -43,7 +43,6 @@ public class CustomTokenGranter extends AbstractTokenGranter {
         String password = tokenRequest.getRequestParameters().get("password");
         String tenant = tokenRequest.getRequestParameters().get("tenant");
         String email = tokenRequest.getRequestParameters().get("email");
-        String phone = tokenRequest.getRequestParameters().get("phone");
 
         try {
             if (SecurityConstant.GRANT_TYPE_USER.equalsIgnoreCase(grantType)) {

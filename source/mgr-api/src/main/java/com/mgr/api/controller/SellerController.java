@@ -15,6 +15,7 @@ import com.mgr.api.model.Account;
 import com.mgr.api.model.Seller;
 import com.mgr.api.model.criteria.SellerCriteria;
 import com.mgr.api.repository.AccountRepository;
+import com.mgr.api.repository.ProductRepository;
 import com.mgr.api.repository.SellerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,9 @@ public class SellerController extends ABasicController {
 
     @Autowired
     private SellerMapper sellerMapper;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('SEL_C')")
@@ -113,9 +117,11 @@ public class SellerController extends ABasicController {
     public ApiMessageDto<Void> delete(@PathVariable("id") Long id) {
         Seller seller = sellerRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Seller profile not found", ErrorCode.USER_ERROR_NOT_FOUND));
-
         seller.setStatus(MgrConstant.STATUS_DELETE);
         sellerRepository.save(seller);
+
+        productRepository.updateStatusBySellerId(id, MgrConstant.STATUS_DELETE);
+
         return makeSuccessResponse(null, "Seller soft deleted successfully");
     }
 }

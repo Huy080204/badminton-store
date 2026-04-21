@@ -92,8 +92,7 @@ public class AccountController extends ABasicController {
 
     @PostMapping(value = "/register-seller", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ApiResponse<String> registerSeller(@Valid @RequestBody RegistrationSellerForm registrationSellerForm, BindingResult bindingResult) {
-        ApiResponse<String> apiMessageDto = new ApiResponse<>();
+    public ApiMessageDto<Void> registerSeller(@Valid @RequestBody RegistrationSellerForm registrationSellerForm, BindingResult bindingResult) {
         if (accountRepository.existsByUsername(registrationSellerForm.getUsername())) {
             throw new BadRequestException("Username is existed!", ErrorCode.ACCOUNT_ERROR_USERNAME_EXISTED);
         }
@@ -106,26 +105,22 @@ public class AccountController extends ABasicController {
             throw new BadRequestException("Phone is existed!", ErrorCode.ACCOUNT_ERROR_PHONE_EXISTED);
         }
 
-        Group group = groupRepository.findFirstByKind(MgrConstant.USER_KIND_SELLER);
-        if (group == null) {
-            throw new NotFoundException("Seller group not found!", ErrorCode.GROUP_ERROR_NOT_FOUND);
-        }
 
         Account account = accountMapper.fromRegistrationSellerFormToEntity(registrationSellerForm);
         account.setPassword(passwordEncoder.encode(registrationSellerForm.getPassword()));
         account.setKind(MgrConstant.USER_KIND_SELLER);
+        Group group = new Group();
+        group.setId(MgrConstant.GROUP_ID_SELLER);
         account.setGroup(group);
         account.setStatus(MgrConstant.STATUS_PENDING);
         accountRepository.save(account);
 
-        apiMessageDto.setMessage("Register seller account success. Please wait for admin approval.");
-        return apiMessageDto;
+        return makeSuccessResponse(null, "Register seller successfully");
     }
 
     @PutMapping(value = "/approve-seller/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ApiResponse<String> approveSeller(@PathVariable("id") Long id) {
-        ApiResponse<String> apiMessageDto = new ApiResponse<>();
+    public ApiMessageDto<Void> approveSeller(@PathVariable("id") Long id) {
         if (!isSuperAdmin()) {
             throw new BadRequestException("Can not approve seller", ErrorCode.ACCOUNT_ERROR_UNABLE_UPDATE);
         }
@@ -138,9 +133,7 @@ public class AccountController extends ABasicController {
         }
         account.setStatus(MgrConstant.STATUS_ACTIVE);
         accountRepository.save(account);
-
-        apiMessageDto.setMessage("Approve seller account success.");
-        return apiMessageDto;
+        return makeSuccessResponse(null, "Approved seller");
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
