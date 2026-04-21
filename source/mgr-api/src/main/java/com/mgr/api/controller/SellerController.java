@@ -65,7 +65,7 @@ public class SellerController extends ABasicController {
         seller.setStatus(MgrConstant.STATUS_ACTIVE);
 
         sellerRepository.save(seller);
-        return makeSuccessResponse(null, "Seller profile created successfully");
+        return makeSuccessResponse("Seller profile created successfully");
     }
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -77,7 +77,7 @@ public class SellerController extends ABasicController {
 
         sellerMapper.mappingUpdateFormToEntity(updateSellerForm, seller);
         sellerRepository.save(seller);
-        return makeSuccessResponse(null, "Seller updated successfully");
+        return makeSuccessResponse("Seller updated successfully");
     }
 
     @PutMapping(value = "/update-profile", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -89,7 +89,7 @@ public class SellerController extends ABasicController {
 
         sellerMapper.mappingUpdateProfileFormToEntity(updateSellerProfileForm, seller);
         sellerRepository.save(seller);
-        return makeSuccessResponse(null, "Seller profile updated successfully");
+        return makeSuccessResponse("Seller profile updated successfully");
     }
 
     @GetMapping(value = "/profile", produces = MediaType.APPLICATION_JSON_VALUE)

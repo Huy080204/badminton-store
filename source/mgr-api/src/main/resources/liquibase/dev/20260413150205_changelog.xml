@@ -86,7 +86,7 @@
     <!-- 3. Cấu hình Grant Type 'seller' cho OAuth2 Client -->
     <changeSet id="1776092534355-5" author="Authentication">
         <update tableName="oauth_client_details">
-            <column name="authorized_grant_types" value="custom,password,refresh_token,client_credentials,authorization_code,seller"/>
+            <column name="authorized_grant_types" value="custom,password,refresh_token,client_credentials,authorization_code,user,seller"/>
             <where>client_id = 'abc_client'</where>
         </update>
     </changeSet>
