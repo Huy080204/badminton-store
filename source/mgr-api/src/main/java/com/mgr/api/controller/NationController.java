@@ -2,6 +2,7 @@ package com.mgr.api.controller;
 
 import com.mgr.api.dto.ApiMessageDto;
 import com.mgr.api.dto.ApiResponse;
+import com.mgr.api.dto.ErrorCode;
 import com.mgr.api.dto.ResponseListDto;
 import com.mgr.api.dto.nation.NationDto;
 import com.mgr.api.exception.BadRequestException;
@@ -42,69 +43,68 @@ public class NationController extends ABasicController{
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('NAT_C')")
-    public ApiMessageDto<Void> create(@Valid @RequestBody CreateNationForm form, BindingResult bindingResult){
+    public ApiMessageDto<Void> create(@Valid @RequestBody CreateNationForm form, BindingResult bindingResult) {
         Nation parent = null;
         //When the form is passed, the kind is 1 (province), meaning it's already in the highest nation, so there will be no parent ID of the parent nation.
-        if(form.getKind() == 1){
-            if(form.getParentId() != null){
-                throw new BadRequestException("Province is highest level, it haven't parent");
+        if (form.getKind() == NATION_KIND_PROVINCE) {
+            if (form.getParentId() != null) {
+                throw new BadRequestException("Province is highest level, it haven't parent", ErrorCode.NATION_ERROR_PROVINCE_PARENT_INVALID);
             }
-        }
-        else {
-            if(form.getParentId() == null){
-                throw new BadRequestException("This kind must have father parent");
+        } else {
+            if (form.getParentId() == null) {
+                throw new BadRequestException("This kind must have father parent", ErrorCode.NATION_ERROR_KIND_INVALID);
             }
             parent = nationRepository.findById(form.getParentId())
-                    .orElseThrow(()-> new NotFoundException("ParentId Not Found"));
+                    .orElseThrow(() -> new NotFoundException("ParentId Not Found", ErrorCode.NATION_ERROR_PARENT_NOT_FOUND));
             // The child's rank must be equal to the father's rank + 1.
-            if(form.getKind() != parent.getKind() +1 ){
-                throw new BadRequestException("Kind not match selected father parent");
+            if (form.getKind() != parent.getKind() + 1) {
+                throw new BadRequestException("Kind not match selected father parent", ErrorCode.NATION_ERROR_KIND_INVALID);
             }
         }
 
         // 2. Check for duplicate names within the same area; for example, a province cannot have two districts with the same name.
         boolean isDuplicate = nationRepository.existsByNameAndParent(form.getName(), parent);
         if (isDuplicate) {
-            throw new BadRequestException("Parent Name have existed");
+            throw new BadRequestException("Parent Name have existed", ErrorCode.NATION_ERROR_NAME_EXISTED);
         }
 
         Nation nation = nationMapper.fromCreateFormToEntity(form);
         nation.setParent(parent);
         nationRepository.save(nation);
 
-        return  makeSuccessResponse("Create Success");
+        return makeSuccessResponse("Create Success");
     }
 
     @PostMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('NAT_U')")
-    public ApiMessageDto<Void> update(@PathVariable Long id, @Valid @RequestBody UpdateNationForm form, BindingResult bindingResult){
+    public ApiMessageDto<Void> update(@PathVariable Long id, @Valid @RequestBody UpdateNationForm form, BindingResult bindingResult) {
         Nation nation = nationRepository.findById(form.getId())
-                .orElseThrow(()-> new NotFoundException("Resource Not Found"));
+                .orElseThrow(() -> new NotFoundException("Resource Not Found", ErrorCode.NATION_ERROR_NOT_FOUND));
         //Same logic create
         Nation parent = null;
         String trimmedName = form.getName().trim();
         if (nation.getKind().equals(NATION_KIND_PROVINCE)) {
             // If it is currently a Province, it is not permitted to transfer ownership to someone else's child.
-            if (nation.getParent().getId()!= null) {
-                throw new BadRequestException("A first-level unit (province) cannot have a parent unit.");
+            if (nation.getParent() != null && nation.getParent().getId() != null) {
+                throw new BadRequestException("A first-level unit (province) cannot have a parent unit.", ErrorCode.NATION_ERROR_PROVINCE_PARENT_INVALID);
             }
         } else {
             // If it's a District/Commune, a new parentId is required.
-            if (nation.getParent().getId() == null) {
-                throw new BadRequestException("The current rank requires a parent unit.");
+            if (nation.getParent() == null || nation.getParent().getId() == null) {
+                throw new BadRequestException("The current rank requires a parent unit.", ErrorCode.NATION_ERROR_KIND_INVALID);
             }
 
             parent = nationRepository.findById(nation.getParent().getId())
-                    .orElseThrow(() -> new NotFoundException("No new parent unit found."));
+                    .orElseThrow(() -> new NotFoundException("No new parent unit found.", ErrorCode.NATION_ERROR_PARENT_NOT_FOUND));
 
             if (nation.getKind() != parent.getKind() + 1) {
-                throw new BadRequestException("The new father's unit is not compatible with the current rank.");
+                throw new BadRequestException("The new father's unit is not compatible with the current rank.", ErrorCode.NATION_ERROR_KIND_INVALID);
             }
         }
 
         //Check for duplicate names within the same area (excluding current IDs).
         if (!trimmedName.equalsIgnoreCase(nation.getName()) || (parent != null && !parent.equals(nation.getParent())) || (parent == null && nation.getParent() != null)) {
-            throw new BadRequestException("This unit's name already exists in the selected area.");
+            throw new BadRequestException("This unit's name already exists in the selected area.", ErrorCode.NATION_ERROR_NAME_EXISTED);
         }
         //Since I only need to set the name, I don't need to use a mapper.
         nation.setName(trimmedName);
@@ -117,7 +117,7 @@ public class NationController extends ABasicController{
     @PreAuthorize("hasRole('NAT_V')")
     public ApiMessageDto<NationDto> get(@PathVariable("id") Long id) {
         Nation nation = nationRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Nation not found"));
+                .orElseThrow(() -> new NotFoundException("Nation not found", ErrorCode.NATION_ERROR_NOT_FOUND));
         return makeSuccessResponse(nationMapper.fromEntityToNationDto(nation), "Get nation success");
     }
 
@@ -141,7 +141,7 @@ public class NationController extends ABasicController{
     @Transactional
     public ApiMessageDto<Void> delete(@PathVariable("id") Long id) {
         Nation nation = nationRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Nation not found"));
+                .orElseThrow(() -> new NotFoundException("Nation not found", ErrorCode.NATION_ERROR_NOT_FOUND));
         if (nation.getKind().equals(MgrConstant.NATION_KIND_PROVINCE)) {
             //Delete commune
             nationRepository.deleteGrandchildrenByProvinceId(nation.getId());

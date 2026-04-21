@@ -57,5 +57,4 @@
             <column name="permission_id" valueNumeric="184"/>
         </insert>
     </changeSet>
-
 </databaseChangeLog>

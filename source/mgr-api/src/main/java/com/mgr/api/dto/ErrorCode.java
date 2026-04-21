@@ -48,5 +48,13 @@ public class ErrorCode {
     public static final String CATEGORY_ERROR_NOT_FOUND = "ERROR-CATEGORY-0001";
     public static final String ERROR_INVALID_FORM = "ERROR-FORM-0001";
 
+    /**
+     * Nation error code
+     */
+    public static final String NATION_ERROR_NOT_FOUND = "ERROR-NATION-0000";
+    public static final String NATION_ERROR_NAME_EXISTED = "ERROR-NATION-0001";
+    public static final String NATION_ERROR_KIND_INVALID = "ERROR-NATION-0002";
+    public static final String NATION_ERROR_PARENT_NOT_FOUND = "ERROR-NATION-0003";
+    public static final String NATION_ERROR_PROVINCE_PARENT_INVALID = "ERROR-NATION-0004";
 
 }
