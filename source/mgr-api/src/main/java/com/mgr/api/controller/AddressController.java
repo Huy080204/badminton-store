@@ -3,6 +3,7 @@ package com.mgr.api.controller;
 import com.mgr.api.constant.MgrConstant;
 import com.mgr.api.dto.ApiMessageDto;
 import com.mgr.api.dto.ErrorCode;
+import com.mgr.api.exception.BadRequestException;
 import com.mgr.api.exception.NotFoundException;
 import com.mgr.api.form.address.CreateAddressForm;
 import com.mgr.api.form.address.UpdateAddressForm;
@@ -43,31 +44,12 @@ public class AddressController extends ABasicController {
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ADDR_C')")
     public ApiMessageDto<Void> create(@Valid @RequestBody CreateAddressForm form, BindingResult bindingResult) {
-        User user = userRepository.findById(form.getUserId())
+        User user = userRepository.findById(getCurrentUser())
                 .orElseThrow(() -> new NotFoundException("User not found", ErrorCode.ADDRESS_ERROR_USER_NOT_FOUND));
 
         Address address = addressMapper.fromCreateFormToEntity(form);
         address.setUser(user);
         address.setStatus(MgrConstant.STATUS_ACTIVE);
-
-        if (form.getProvinceId() != null) {
-            Nation province = nationRepository.findById(form.getProvinceId())
-                    .orElseThrow(() -> new NotFoundException("Province not found", ErrorCode.ADDRESS_ERROR_PROVINCE_NOT_FOUND));
-            address.setProvince(province);
-        }
-
-        if (form.getDistrictId() != null) {
-            Nation district = nationRepository.findById(form.getDistrictId())
-                    .orElseThrow(() -> new NotFoundException("District not found", ErrorCode.ADDRESS_ERROR_DISTRICT_NOT_FOUND));
-            address.setDistrict(district);
-        }
-
-        if (form.getCommuneId() != null) {
-            Nation commune = nationRepository.findById(form.getCommuneId())
-                    .orElseThrow(() -> new NotFoundException("Commune not found", ErrorCode.ADDRESS_ERROR_COMMUNE_NOT_FOUND));
-            address.setCommune(commune);
-        }
-
         addressRepository.save(address);
 
         if (Boolean.TRUE.equals(address.getIsDefault())) {
@@ -83,25 +65,11 @@ public class AddressController extends ABasicController {
         Address address = addressRepository.findById(form.getId())
                 .orElseThrow(() -> new NotFoundException("Address not found", ErrorCode.ADDRESS_ERROR_NOT_FOUND));
 
+        if (!address.getUser().getId().equals(getCurrentUser())) {
+            throw new BadRequestException("You do not have permission to update this address", ErrorCode.ADDRESS_ERROR_UNAUTHORIZED);
+        }
+
         addressMapper.updateEntityFromUpdateForm(form, address);
-
-        if (form.getProvinceId() != null) {
-            Nation province = nationRepository.findById(form.getProvinceId())
-                    .orElseThrow(() -> new NotFoundException("Province not found", ErrorCode.ADDRESS_ERROR_PROVINCE_NOT_FOUND));
-            address.setProvince(province);
-        }
-
-        if (form.getDistrictId() != null) {
-            Nation district = nationRepository.findById(form.getDistrictId())
-                    .orElseThrow(() -> new NotFoundException("District not found", ErrorCode.ADDRESS_ERROR_DISTRICT_NOT_FOUND));
-            address.setDistrict(district);
-        }
-
-        if (form.getCommuneId() != null) {
-            Nation commune = nationRepository.findById(form.getCommuneId())
-                    .orElseThrow(() -> new NotFoundException("Commune not found", ErrorCode.ADDRESS_ERROR_COMMUNE_NOT_FOUND));
-            address.setCommune(commune);
-        }
 
         addressRepository.save(address);
 

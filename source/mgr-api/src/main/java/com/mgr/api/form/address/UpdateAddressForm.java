@@ -21,12 +21,12 @@ public class UpdateAddressForm {
     @ApiModelProperty(name = "isDefault")
     private Boolean isDefault;
 
-    @ApiModelProperty(name = "provinceId")
+    @ApiModelProperty(name = "provinceId", required = true)
     private Long provinceId;
 
-    @ApiModelProperty(name = "districtId")
+    @ApiModelProperty(name = "districtId", required = true)
     private Long districtId;
 
-    @ApiModelProperty(name = "communeId")
+    @ApiModelProperty(name = "communeId", required = true)
     private Long communeId;
 }

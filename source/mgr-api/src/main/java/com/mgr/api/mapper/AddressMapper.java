@@ -11,25 +11,17 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface AddressMapper {
+
+    @BeanMapping(ignoreByDefault = true)
     @Mapping(source = "street", target = "street")
     @Mapping(source = "zipCode", target = "zipCode")
     @Mapping(source = "isDefault", target = "isDefault")
-    @Mapping(target = "user", ignore = true)
-    @Mapping(target = "province", ignore = true)
-    @Mapping(target = "district", ignore = true)
-    @Mapping(target = "commune", ignore = true)
-    @Mapping(target = "status", ignore = true)
     Address fromCreateFormToEntity(CreateAddressForm form);
 
+    @BeanMapping(ignoreByDefault = true)
     @Mapping(source = "street", target = "street")
     @Mapping(source = "zipCode", target = "zipCode")
     @Mapping(source = "isDefault", target = "isDefault")
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "user", ignore = true)
-    @Mapping(target = "province", ignore = true)
-    @Mapping(target = "district", ignore = true)
-    @Mapping(target = "commune", ignore = true)
-    @Mapping(target = "status", ignore = true)
     void updateEntityFromUpdateForm(UpdateAddressForm form, @MappingTarget Address address);
 
     @Mapping(source = "user.account.id", target = "userId")
