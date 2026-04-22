@@ -25,4 +25,43 @@
             <column name="parent_id" type="BIGINT"/>
         </createTable>
     </changeSet>
+    <!-- Trong 20260413052731_changelog.xml đã có NAT_U,C,D (dòng 195,196,197), -->
+    <changeSet id="1776058061003-4" author="Authentication">
+        <insert tableName="db_mgr_permission">
+            <column name="id" valueNumeric="183"/>
+            <column name="name" value="View Nation Entry"/>
+            <column name="action" value="/v1/nation/get"/>
+            <column name="show_menu" valueBoolean="false"/>
+            <column name="permission_code" value="NAT_V"/>
+            <column name="name_group" value="Nation"/>
+            <column name="status" valueNumeric="1"/>
+            <column name="created_by" value="admin"/>
+            <column name="created_date" valueDate="2024-04-08T00:00:00"/>
+            <column name="modified_by" value="admin"/>
+            <column name="modified_date" valueDate="2024-04-08T00:00:00"/>
+        </insert>
+        <insert tableName="db_mgr_permission">
+            <column name="id" valueNumeric="184"/>
+            <column name="name" value="List Nations"/>
+            <column name="action" value="/v1/nation/list"/>
+            <column name="show_menu" valueBoolean="false"/>
+            <column name="permission_code" value="NAT_L"/>
+            <column name="name_group" value="Nation"/>
+            <column name="status" valueNumeric="1"/>
+            <column name="created_by" value="admin"/>
+            <column name="created_date" valueDate="2024-04-08T00:00:00"/>
+            <column name="modified_by" value="admin"/>
+            <column name="modified_date" valueDate="2024-04-08T00:00:00"/>
+        </insert>
+
+        <!-- Gán quyền cho nhóm ADMIN (ID 1) -->
+        <insert tableName="db_mgr_permission_group">
+            <column name="group_id" valueNumeric="1"/>
+            <column name="permission_id" valueNumeric="183"/>
+        </insert>
+        <insert tableName="db_mgr_permission_group">
+            <column name="group_id" valueNumeric="1"/>
+            <column name="permission_id" valueNumeric="184"/>
+        </insert>
+    </changeSet>
 </databaseChangeLog>
