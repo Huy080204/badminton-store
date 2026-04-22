@@ -25,6 +25,10 @@ public interface AccountRepository extends JpaRepository<Account, Long>, JpaSpec
 
     Optional<Account> findFirstByPhone(String phone);
 
+    @Query("SELECT a FROM Account a WHERE a.username = :username OR a.email = :username OR a.phone = :username")
+    Optional<Account> findByUsernamePhoneEmail(@Param("username") String username);
+
+
     @Query("SELECT a FROM Account a WHERE a.username = :username OR a.phone = :phone")
     Optional<Account> findByUsernameOrPhone(@Param("username") String username, @Param("phone") String phone);
 

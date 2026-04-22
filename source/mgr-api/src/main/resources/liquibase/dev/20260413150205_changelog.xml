@@ -1,0 +1,93 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="Authentication" id="1776092534355-1">
+        <createTable tableName="db_mgr_seller">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_mgr_sellerPK"/>
+            </column>
+            <column name="shop_description" type="VARCHAR(255)"/>
+            <column name="shop_name" type="VARCHAR(255)"/>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1776092534355-2">
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="db_mgr_seller" constraintName="FK7sj5lenr327u2b0gul4y1596f" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_mgr_account" validate="true"/>
+    </changeSet>
+    <changeSet id="1776092534355-3" author="Authentication">
+        <update tableName="db_mgr_group">
+            <column name="kind" valueNumeric="2"/> <!-- Regular User -->
+            <where>name = 'ROLE USER'</where>
+        </update>
+        <update tableName="db_mgr_group">
+            <column name="kind" valueNumeric="3"/> <!-- Seller -->
+            <where>name = 'ROLE SELLER'</where>
+        </update>
+    </changeSet>
+    <changeSet id="1776092534355-4" author="Authentication">
+        <insert tableName="db_mgr_permission">
+            <column name="id" valueNumeric="145"/>
+            <column name="name" value="View Seller Profile"/>
+            <column name="permission_code" value="SEL_V"/>
+            <column name="action" value="/v1/seller/profile"/>
+            <column name="name_group" value="Seller"/>
+            <column name="status" valueNumeric="1"/>
+            <column name="show_menu" valueBoolean="false"/>
+            <column name="created_by" value="admin"/><column name="created_date" valueComputed="now()"/>
+            <column name="modified_by" value="admin"/><column name="modified_date" valueComputed="now()"/>
+        </insert>
+
+        <!-- Quyền Cập nhật Profile (ID: 143) -->
+        <insert tableName="db_mgr_permission">
+            <column name="id" valueNumeric="143"/>
+            <column name="name" value="Update Seller Profile"/>
+            <column name="permission_code" value="SEL_UP"/>
+            <column name="action" value="/v1/seller/update-profile"/>
+            <column name="name_group" value="Seller"/>
+            <column name="status" valueNumeric="1"/>
+            <column name="show_menu" valueBoolean="false"/>
+            <column name="created_by" value="admin"/><column name="created_date" valueComputed="now()"/>
+            <column name="modified_by" value="admin"/><column name="modified_date" valueComputed="now()"/>
+        </insert>
+        <!-- Quyền Soft Delete (ID: 144) -->
+        <insert tableName="db_mgr_permission">
+            <column name="id" valueNumeric="144"/>
+            <column name="name" value="Soft Delete Seller"/>
+            <column name="permission_code" value="SEL_D"/>
+            <column name="action" value="/v1/seller/delete/*"/>
+            <column name="name_group" value="Seller"/>
+            <column name="status" valueNumeric="1"/>
+            <column name="show_menu" valueBoolean="false"/>
+            <column name="created_by" value="admin"/><column name="created_date" valueComputed="now()"/>
+            <column name="modified_by" value="admin"/><column name="modified_date" valueComputed="now()"/>
+        </insert>
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="3"/><column name="permission_id" valueNumeric="140"/></insert>
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="3"/><column name="permission_id" valueNumeric="143"/></insert>
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="3"/><column name="permission_id" valueNumeric="145"/></insert>
+
+        <!-- Admin (Group ID = 1) có quyền: Xóa Seller (144), List Seller (142), Update (141) -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="1"/><column name="permission_id" valueNumeric="141"/></insert>
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="1"/><column name="permission_id" valueNumeric="142"/></insert>
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="1"/><column name="permission_id" valueNumeric="144"/></insert>
+    </changeSet>
+    <!-- 3. Cấu hình Grant Type 'seller' cho OAuth2 Client -->
+    <changeSet id="1776092534355-5" author="Authentication">
+        <update tableName="oauth_client_details">
+            <column name="authorized_grant_types" value="custom,password,refresh_token,client_credentials,authorization_code,user,seller"/>
+            <where>client_id = 'abc_client'</where>
+        </update>
+    </changeSet>
+</databaseChangeLog>

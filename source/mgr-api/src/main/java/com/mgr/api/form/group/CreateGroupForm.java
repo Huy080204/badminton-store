@@ -18,6 +18,10 @@ public class CreateGroupForm {
     @ApiModelProperty(name = "description", required = true)
     private String description;
 
+    @NotNull(message = "kind can not be null")
+    @ApiModelProperty(name = "kind", required = true)
+    private Integer kind;
+
     @NotNull(message = "permissions cant not be null")
     @ApiModelProperty(name = "permissions", required = true)
     private Long[] permissions;

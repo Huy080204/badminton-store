@@ -15,6 +15,8 @@ public class ErrorCode {
     public static final String ACCOUNT_ERROR_UNABLE_CREATE = "ERROR-ACCOUNT-0003";
     public static final String ACCOUNT_ERROR_UNABLE_UPDATE = "ERROR-ACCOUNT-0004";
     public static final String ACCOUNT_ERROR_UNABLE_DELETE = "ERROR-ACCOUNT-0005";
+    public static final String ACCOUNT_ERROR_EMAIL_EXISTED = "ERROR-ACCOUNT-0006";
+    public static final String ACCOUNT_ERROR_PHONE_EXISTED = "ERROR-ACCOUNT-0007";
 
     /**
      * Starting error code DATABASE_ERROR
@@ -44,6 +46,10 @@ public class ErrorCode {
     public static final String USER_ERROR_PERMISSION_CREATE = "ERROR-USER-0004";
     public static final String USER_ERROR_PERMISSION_UPDATE = "ERROR-USER-0005";
     public static final String USER_ERROR_PERMISSION_GET = "ERROR-USER-0006";
+    /**
+     * Seller error code
+     */
+    public static final String SELLER_ERROR_EXISTED = "ERROR-SELLER-0000";
 
     public static final String CATEGORY_ERROR_NOT_FOUND = "ERROR-CATEGORY-0001";
     public static final String ERROR_INVALID_FORM = "ERROR-FORM-0001";
@@ -57,4 +63,8 @@ public class ErrorCode {
     public static final String NATION_ERROR_PARENT_NOT_FOUND = "ERROR-NATION-0003";
     public static final String NATION_ERROR_PROVINCE_PARENT_INVALID = "ERROR-NATION-0004";
 
+    /**
+     * Product  error code
+     */
+    public static final String PRODUCT_ERROR_NOT_FOUND = "ERROR-PRODUCT-0000";
 }
