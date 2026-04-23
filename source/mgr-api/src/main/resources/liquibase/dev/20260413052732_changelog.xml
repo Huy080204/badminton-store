@@ -18,5 +18,4 @@
             <where>client_id = 'abc_client'</where>
         </update>
     </changeSet>
-
 </databaseChangeLog>
