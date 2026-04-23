@@ -67,4 +67,11 @@ public class ErrorCode {
      * Product  error code
      */
     public static final String PRODUCT_ERROR_NOT_FOUND = "ERROR-PRODUCT-0000";
+
+    /**
+     * Address error code
+     */
+    public static final String ADDRESS_ERROR_NOT_FOUND = "ERROR-ADDRESS-0000";
+    public static final String ADDRESS_ERROR_USER_NOT_FOUND = "ERROR-ADDRESS-0001";
+    public static final String ADDRESS_ERROR_UNAUTHORIZED = "ERROR-ADDRESS-0002";
 }
