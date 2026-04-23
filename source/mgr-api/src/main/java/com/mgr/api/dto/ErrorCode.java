@@ -57,4 +57,10 @@ public class ErrorCode {
      * Product  error code
      */
     public static final String PRODUCT_ERROR_NOT_FOUND = "ERROR-PRODUCT-0000";
+    public static final String PRODUCT_ERROR_OUT_OF_STOCK = "ERROR-PRODUCT-0001";
+
+    /**
+     * Cart error code
+     */
+    public static final String CART_ERROR_ITEM_NOT_FOUND = "ERROR-CART-0000";
 }
