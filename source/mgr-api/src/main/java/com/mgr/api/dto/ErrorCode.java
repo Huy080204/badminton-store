@@ -36,6 +36,7 @@ public class ErrorCode {
      */
     public static final String GROUP_ERROR_NOT_FOUND = "ERROR-GROUP-0000";
     public static final String GROUP_ERROR_NAME_EXISTED = "ERROR-GROUP-0001";
+<<<<<<< Updated upstream
     public static final String GROUP_ERROR_INVALID_KIND = "ERROR-GROUP-0002";
     /**
      * User error code
@@ -80,4 +81,29 @@ public class ErrorCode {
      * Cart error code
      */
     public static final String CART_ERROR_ITEM_NOT_FOUND = "ERROR-CART-0000";
+=======
+
+    public static final String USER_ERROR_USERNAME_EXISTED = "ERROR-USER-0001";
+    public static final String USER_ERROR_NOT_FOUND = "ERROR-USER-0002";
+    public static final String USER_ERROR_EMAIL_EXISTED = "ERROR-USER-0003";
+    public static final String USER_ERROR_PHONE_EXISTED = "ERROR-USER-0004";
+
+    public static final String USER_ERROR_PERMISSION = "ERROR-USER-0004";
+
+    public static final String NATION_ADDRESS_INVALID = "ERROR-NATION-0001";
+    public static final String NATION_ERROR_NOT_FOUND = "ERROR-NATION-0000";
+    public static final String NATION_ERROR_INVALID = "ERROR-NATION-0003";
+    public static final String NATION_ERROR_EXIST = "ERROR-USER-0001";
+
+    public static final String NATION_ERROR_CANNOT_DELETE = "ERROR-USER-0004";
+
+    public static final String ADDRESS_ERROR_NOT_FOUND = "ERROR-USER-0004";
+    public static final String ADDRESS_ERROR_INVALID  = "ERROR-USER-0002";
+    public static final String ADDRESS_ERROR_PERMISSION  = "ERROR-ADDRESS-0002";
+    public static final String USER_ERROR_EXISTED = "ERROR-USER-0001";
+    public static final String ERROR_INVALID_FORM = "ERROR-FORM-0001";
+    public static final String COUPON_ERROR_NOT_FOUND = "ERROR-COUPON-0001";
+    public static final String ORDER_ERROR_NOT_FOUND = "ERROR-ORDER-0001";
+
+>>>>>>> Stashed changes
 }
