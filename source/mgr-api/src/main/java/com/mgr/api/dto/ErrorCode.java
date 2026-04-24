@@ -5,6 +5,7 @@ public class ErrorCode {
      * General error code
      */
     public static final String GENERAL_ERROR_INVALID_USERNAME_OR_PASSWORD = "ERROR-GENERAL-0000";
+    public static final String ERROR_INVALID_FORM = "ERROR-FORM-0001";
 
     /**
      * Starting error code Account
@@ -50,27 +51,14 @@ public class ErrorCode {
      * Seller error code
      */
     public static final String SELLER_ERROR_EXISTED = "ERROR-SELLER-0000";
-
+    /**
+     * Category error code
+     */
     public static final String CATEGORY_ERROR_NOT_FOUND = "ERROR-CATEGORY-0001";
-
-    public static final String USER_ERROR_PERMISSION = "ERROR-USER-0004";
-
-    public static final String NATION_ADDRESS_INVALID = "ERROR-NATION-0001";
-    public static final String NATION_ERROR_NOT_FOUND = "ERROR-NATION-0000";
-    public static final String NATION_ERROR_INVALID = "ERROR-NATION-0003";
-    public static final String NATION_ERROR_EXIST = "ERROR-USER-0001";
-
-    public static final String NATION_ERROR_CANNOT_DELETE = "ERROR-USER-0004";
-
-    public static final String ADDRESS_ERROR_NOT_FOUND = "ERROR-USER-0004";
-    public static final String ADDRESS_ERROR_INVALID  = "ERROR-USER-0002";
-    public static final String ADDRESS_ERROR_PERMISSION  = "ERROR-ADDRESS-0002";
-    public static final String USER_ERROR_EXISTED = "ERROR-USER-0001";
-    public static final String ERROR_INVALID_FORM = "ERROR-FORM-0001";
-
     /**
      * Nation error code
      */
+    public static final String NATION_ERROR_NOT_FOUND = "ERROR-NATION-0000";
     public static final String NATION_ERROR_NAME_EXISTED = "ERROR-NATION-0001";
     public static final String NATION_ERROR_KIND_INVALID = "ERROR-NATION-0002";
     public static final String NATION_ERROR_PARENT_NOT_FOUND = "ERROR-NATION-0003";
@@ -87,7 +75,7 @@ public class ErrorCode {
     public static final String ADDRESS_ERROR_USER_NOT_FOUND = "ERROR-ADDRESS-0001";
     public static final String ADDRESS_ERROR_UNAUTHORIZED = "ERROR-ADDRESS-0002";
     public static final String PRODUCT_ERROR_OUT_OF_STOCK = "ERROR-PRODUCT-0001";
-
+    public static final String ADDRESS_ERROR_NOT_FOUND = "ERROR-USER-0004";
     /**
      * Cart error code
      */
