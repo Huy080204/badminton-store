@@ -5,6 +5,7 @@ public class ErrorCode {
      * General error code
      */
     public static final String GENERAL_ERROR_INVALID_USERNAME_OR_PASSWORD = "ERROR-GENERAL-0000";
+    public static final String ERROR_INVALID_FORM = "ERROR-FORM-0001";
 
     /**
      * Starting error code Account
@@ -50,10 +51,10 @@ public class ErrorCode {
      * Seller error code
      */
     public static final String SELLER_ERROR_EXISTED = "ERROR-SELLER-0000";
-
+    /**
+     * Category error code
+     */
     public static final String CATEGORY_ERROR_NOT_FOUND = "ERROR-CATEGORY-0001";
-    public static final String ERROR_INVALID_FORM = "ERROR-FORM-0001";
-
     /**
      * Nation error code
      */
@@ -62,7 +63,10 @@ public class ErrorCode {
     public static final String NATION_ERROR_KIND_INVALID = "ERROR-NATION-0002";
     public static final String NATION_ERROR_PARENT_NOT_FOUND = "ERROR-NATION-0003";
     public static final String NATION_ERROR_PROVINCE_PARENT_INVALID = "ERROR-NATION-0004";
-
+    /**
+     * News error code
+     */
+    public static final String NEWS_ERROR_NOT_FOUND = "ERROR-NEWS-0000";
     /**
      * Product  error code
      */
@@ -71,7 +75,12 @@ public class ErrorCode {
     /**
      * Address error code
      */
-    public static final String ADDRESS_ERROR_NOT_FOUND = "ERROR-ADDRESS-0000";
     public static final String ADDRESS_ERROR_USER_NOT_FOUND = "ERROR-ADDRESS-0001";
     public static final String ADDRESS_ERROR_UNAUTHORIZED = "ERROR-ADDRESS-0002";
+    public static final String PRODUCT_ERROR_OUT_OF_STOCK = "ERROR-PRODUCT-0001";
+    public static final String ADDRESS_ERROR_NOT_FOUND = "ERROR-USER-0004";
+    /**
+     * Cart error code
+     */
+    public static final String CART_ERROR_ITEM_NOT_FOUND = "ERROR-CART-0000";
 }

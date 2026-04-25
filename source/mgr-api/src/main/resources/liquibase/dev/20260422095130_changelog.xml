@@ -1,0 +1,99 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="Authentication" id="1776851506332-1">
+        <createTable tableName="db_mgr_cart">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_mgr_cartPK"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1776851506332-2">
+        <createTable tableName="db_mgr_cart_item">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_mgr_cart_itemPK"/>
+            </column>
+            <column name="quantity" type="INT"/>
+            <column name="cart_id" type="BIGINT"/>
+            <column name="product_id" type="BIGINT"/>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="1776851506332-3">
+        <addForeignKeyConstraint baseColumnNames="id" baseTableName="db_mgr_cart" constraintName="FK5pmwnlfy97rdd9b7g46fioo21" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_mgr_account" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1776851506332-4">
+        <addForeignKeyConstraint baseColumnNames="cart_id" baseTableName="db_mgr_cart_item" constraintName="FKdoal161pv43uceo9akoo6x947" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_mgr_cart" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1776851506332-5">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="db_mgr_cart_item" constraintName="FKldlin8ovx423y2yfh3jegfv3w" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_mgr_product" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="1776851506332-6">
+        <!-- Assign Missing Permissions to ROLE USER (Group ID 4) -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="4"/><column name="permission_id" valueNumeric="120"/></insert> <!-- CRT_C -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="4"/><column name="permission_id" valueNumeric="122"/></insert> <!-- CRT_U -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="4"/><column name="permission_id" valueNumeric="121"/></insert> <!-- CRT_V -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="4"/><column name="permission_id" valueNumeric="123"/></insert> <!-- CRT_D -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="4"/><column name="permission_id" valueNumeric="140"/></insert> <!-- SEL_C -->
+
+        <!-- Assign Missing Permissions to ROLE SELLER (Group ID 3) -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="3"/><column name="permission_id" valueNumeric="120"/></insert> <!-- CRT_C -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="3"/><column name="permission_id" valueNumeric="122"/></insert> <!-- CRT_U -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="3"/><column name="permission_id" valueNumeric="121"/></insert> <!-- CRT_V -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="3"/><column name="permission_id" valueNumeric="123"/></insert> <!-- CRT_D -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="3"/><column name="permission_id" valueNumeric="130"/></insert> <!-- PRD_C -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="3"/><column name="permission_id" valueNumeric="131"/></insert> <!-- PRD_U -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="3"/><column name="permission_id" valueNumeric="132"/></insert> <!-- PRD_D -->
+
+        <!-- Assign All Missing Permissions to ADMIN (Group ID 1) -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="1"/><column name="permission_id" valueNumeric="120"/></insert> <!-- CRT_C -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="1"/><column name="permission_id" valueNumeric="122"/></insert> <!-- CRT_U -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="1"/><column name="permission_id" valueNumeric="121"/></insert> <!-- CRT_V -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="1"/><column name="permission_id" valueNumeric="123"/></insert> <!-- CRT_D -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="1"/><column name="permission_id" valueNumeric="144"/></insert> <!-- SEL_D -->
+
+        <!-- Assign All Permissions to SUPER ADMIN (Group ID 2) - Since it was mostly empty -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="2"/><column name="permission_id" valueNumeric="120"/></insert> <!-- CRT_C -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="2"/><column name="permission_id" valueNumeric="122"/></insert> <!-- CRT_U -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="2"/><column name="permission_id" valueNumeric="121"/></insert> <!-- CRT_V -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="2"/><column name="permission_id" valueNumeric="123"/></insert> <!-- CRT_D -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="2"/><column name="permission_id" valueNumeric="130"/></insert> <!-- PRD_C -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="2"/><column name="permission_id" valueNumeric="131"/></insert> <!-- PRD_U -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="2"/><column name="permission_id" valueNumeric="132"/></insert> <!-- PRD_D -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="2"/><column name="permission_id" valueNumeric="160"/></insert> <!-- CAT_C -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="2"/><column name="permission_id" valueNumeric="161"/></insert> <!-- CAT_U -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="2"/><column name="permission_id" valueNumeric="162"/></insert> <!-- CAT_D -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="2"/><column name="permission_id" valueNumeric="140"/></insert> <!-- SEL_C -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="2"/><column name="permission_id" valueNumeric="141"/></insert> <!-- SEL_U -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="2"/><column name="permission_id" valueNumeric="142"/></insert> <!-- SEL_L -->
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="2"/><column name="permission_id" valueNumeric="144"/></insert> <!-- SEL_D -->
+    </changeSet>
+</databaseChangeLog>
