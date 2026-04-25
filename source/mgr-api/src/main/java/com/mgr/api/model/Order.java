@@ -21,6 +21,9 @@ public class Order extends Auditable<String> {
     @JoinColumn(name = "account_id")
     private Account account;
 
+    // status được kế thừa từ Auditable (int):
+    // 1: Chờ xác nhận, 2: Đã xác nhận, 3: Đang giao, 4: Hoàn thành, 0: Đã hủy
+
     @Column(name = "total_price")
     private Double totalPrice;
 

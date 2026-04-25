@@ -1,0 +1,100 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- ChangeSet 1: Tạo 4 permissions cho module Order -->
+    <changeSet id="20260425150000-1" author="Authentication">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM db_mgr_permission WHERE permission_code = 'ORDER_L'</sqlCheck>
+        </preConditions>
+        <!-- ORDER_L: Xem danh sách đơn hàng -->
+        <insert tableName="db_mgr_permission">
+            <column name="id" valueNumeric="115"/><column name="name" value="List Orders"/><column name="action" value="/v1/order/list"/><column name="show_menu" valueBoolean="false"/><column name="permission_code" value="ORDER_L"/><column name="name_group" value="Order"/><column name="status" valueNumeric="1"/><column name="created_by" value="admin"/><column name="created_date" valueDate="2026-04-25T00:00:00"/><column name="modified_by" value="admin"/><column name="modified_date" valueDate="2026-04-25T00:00:00"/>
+        </insert>
+        <!-- ORDER_V: Xem chi tiết đơn hàng -->
+        <insert tableName="db_mgr_permission">
+            <column name="id" valueNumeric="116"/><column name="name" value="View Order Detail"/><column name="action" value="/v1/order/get/**"/><column name="show_menu" valueBoolean="false"/><column name="permission_code" value="ORDER_V"/><column name="name_group" value="Order"/><column name="status" valueNumeric="1"/><column name="created_by" value="admin"/><column name="created_date" valueDate="2026-04-25T00:00:00"/><column name="modified_by" value="admin"/><column name="modified_date" valueDate="2026-04-25T00:00:00"/>
+        </insert>
+        <!-- ORDER_U: Cập nhật trạng thái đơn hàng -->
+        <insert tableName="db_mgr_permission">
+            <column name="id" valueNumeric="117"/><column name="name" value="Update Order Status"/><column name="action" value="/v1/order/update-status"/><column name="show_menu" valueBoolean="false"/><column name="permission_code" value="ORDER_U"/><column name="name_group" value="Order"/><column name="status" valueNumeric="1"/><column name="created_by" value="admin"/><column name="created_date" valueDate="2026-04-25T00:00:00"/><column name="modified_by" value="admin"/><column name="modified_date" valueDate="2026-04-25T00:00:00"/>
+        </insert>
+        <!-- ORDER_S: Xem thống kê đơn hàng -->
+        <insert tableName="db_mgr_permission">
+            <column name="id" valueNumeric="118"/><column name="name" value="Order Statistics"/><column name="action" value="/v1/order/statistics"/><column name="show_menu" valueBoolean="false"/><column name="permission_code" value="ORDER_S"/><column name="name_group" value="Order"/><column name="status" valueNumeric="1"/><column name="created_by" value="admin"/><column name="created_date" valueDate="2026-04-25T00:00:00"/><column name="modified_by" value="admin"/><column name="modified_date" valueDate="2026-04-25T00:00:00"/>
+        </insert>
+    </changeSet>
+
+    <!-- ChangeSet 2: Gán 4 permissions trên cho Admin Group (ID=1) -->
+    <changeSet id="20260425150000-2" author="Authentication">
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="1"/><column name="permission_id" valueNumeric="115"/></insert>
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="1"/><column name="permission_id" valueNumeric="116"/></insert>
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="1"/><column name="permission_id" valueNumeric="117"/></insert>
+        <insert tableName="db_mgr_permission_group"><column name="group_id" valueNumeric="1"/><column name="permission_id" valueNumeric="118"/></insert>
+    </changeSet>
+
+    <changeSet author="Authentication" id="20260425150000-3">
+        <createTable tableName="db_mgr_order_item">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_mgr_order_itemPK"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DOUBLE PRECISION"/>
+            <column name="quantity" type="INT"/>
+            <column name="order_id" type="BIGINT"/>
+            <column name="product_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="20260425150000-4">
+        <createTable tableName="db_mgr_orders">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_mgr_ordersPK"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment_method" type="INT"/>
+            <column name="total_price" type="DOUBLE PRECISION"/>
+            <column name="account_id" type="BIGINT"/>
+            <column name="address_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="Authentication" id="20260425150000-5">
+        <addForeignKeyConstraint baseColumnNames="order_id" baseTableName="db_mgr_order_item" constraintName="FK26kt1w58y5nvn8diw5ksmhj5e" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_mgr_orders" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="20260425150000-6">
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="db_mgr_order_item" constraintName="FK54i0v7npfushq3af9wft0d04s" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_mgr_product" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="20260425150000-7">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_mgr_orders" constraintName="FK9q4ttsn010aw8lj6a57y1w3ac" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_mgr_account" validate="true"/>
+    </changeSet>
+    <changeSet author="Authentication" id="20260425150000-8">
+        <addForeignKeyConstraint baseColumnNames="address_id" baseTableName="db_mgr_orders" constraintName="FKhqvyp64fdghsdlnkaivlwas9q" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_mgr_address" validate="true"/>
+    </changeSet>
+
+</databaseChangeLog>
