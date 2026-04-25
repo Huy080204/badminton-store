@@ -83,4 +83,12 @@ public class ErrorCode {
      * Cart error code
      */
     public static final String CART_ERROR_ITEM_NOT_FOUND = "ERROR-CART-0000";
+
+    /**
+     * Order error code
+     */
+    public static final String ORDER_ERROR_NOT_FOUND = "ERROR-ORDER-0000";
+    public static final String ORDER_ERROR_INVALID_STATUS = "ERROR-ORDER-0001";
+    public static final String ORDER_ERROR_CANNOT_CANCEL = "ERROR-ORDER-0002";
+    public static final String ORDER_ERROR_UNAUTHORIZED = "ERROR-ORDER-0003";
 }

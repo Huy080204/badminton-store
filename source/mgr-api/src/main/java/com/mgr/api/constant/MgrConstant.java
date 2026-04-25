@@ -19,6 +19,13 @@ public class MgrConstant {
     public static final Integer NATION_KIND_DISTRICT = 2;
     public static final Integer NATION_KIND_COMMUNE = 3;
 
+    // Order status
+    public static final Integer ORDER_STATUS_PENDING = 1;       // Chờ xác nhận
+    public static final Integer ORDER_STATUS_CONFIRMED = 2;     // Đã xác nhận
+    public static final Integer ORDER_STATUS_SHIPPING = 3;      // Đang giao
+    public static final Integer ORDER_STATUS_COMPLETED = 4;     // Hoàn thành
+    public static final Integer ORDER_STATUS_CANCELLED = 0;     // Đã hủy
+
     private MgrConstant() {
         throw new IllegalStateException("Utility class");
     }
