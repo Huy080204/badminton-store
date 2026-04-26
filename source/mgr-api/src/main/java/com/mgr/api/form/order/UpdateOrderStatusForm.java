@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import com.mgr.api.validation.OrderStatus;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -24,6 +25,7 @@ public class UpdateOrderStatusForm {
      * 0: Đã hủy
      */
     @NotNull(message = "status is required")
+    @OrderStatus
     @ApiModelProperty(name = "status", required = true)
     private Integer status;
 }
