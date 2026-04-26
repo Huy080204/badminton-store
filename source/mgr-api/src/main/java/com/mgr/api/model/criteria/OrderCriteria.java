@@ -25,10 +25,8 @@ public class OrderCriteria {
     private String phone;
 
     // Lọc theo khoảng ngày đặt hàng (createdDate từ Auditable, kiểu Date)
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date fromDate;
 
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date toDate;
 
     public Specification<Order> getSpecification() {

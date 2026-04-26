@@ -6,11 +6,13 @@ import com.mgr.api.dto.ErrorCode;
 import com.mgr.api.dto.ResponseListDto;
 import com.mgr.api.dto.order.OrderDto;
 import com.mgr.api.dto.order.OrderStatisticsDto;
+import com.mgr.api.dto.order.TopProductDto;
 import com.mgr.api.exception.BadRequestException;
 import com.mgr.api.exception.NotFoundException;
 import com.mgr.api.form.order.UpdateOrderStatusForm;
 import com.mgr.api.mapper.OrderMapper;
 import com.mgr.api.model.Order;
+import com.mgr.api.model.OrderItem;
 import com.mgr.api.model.criteria.OrderCriteria;
 import com.mgr.api.repository.OrderItemRepository;
 import com.mgr.api.repository.OrderRepository;
@@ -46,11 +48,6 @@ public class OrderController extends ABasicController {
     @Autowired
     private OrderMapper orderMapper;
 
-    // =====================================================================
-    // 1. LẤY DANH SÁCH ĐƠN HÀNG TOÀN HỆ THỐNG - Chỉ Admin
-    //    GET /v1/order/list
-    //    Lọc được theo: id, accountId, tên KH, số điện thoại, trạng thái, fromDate, toDate
-    // =====================================================================
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ORDER_L')")
     public ApiMessageDto<ResponseListDto<List<OrderDto>>> list(OrderCriteria orderCriteria, Pageable pageable) {
@@ -63,11 +60,6 @@ public class OrderController extends ABasicController {
 
         return makeSuccessResponse(listDto, "Get list order success");
     }
-
-    // =====================================================================
-    // 2. XEM CHI TIẾT ĐƠN HÀNG - Chỉ Admin
-    //    GET /v1/order/get/{id}
-    // =====================================================================
     @GetMapping(value = "/get/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ORDER_V')")
     public ApiMessageDto<OrderDto> get(@PathVariable("id") Long id) {
@@ -75,22 +67,11 @@ public class OrderController extends ABasicController {
                 .orElseThrow(() -> new NotFoundException("Order not found", ErrorCode.ORDER_ERROR_NOT_FOUND));
         return makeSuccessResponse(orderMapper.fromEntityToOrderDto(order), "Get order success");
     }
-
-    // =====================================================================
-    // 3. CẬP NHẬT TRẠNG THÁI ĐƠN HÀNG - Chỉ Admin
-    //    PUT /v1/order/update-status
-    //    Luồng: 1 (Chờ XN) -> 2 (Đã XN) -> 3 (Đang giao) -> 4 (Hoàn thành)
-    //    Chỉ cho phép hủy (0) nếu đơn đang ở trạng thái Chờ xác nhận (1)
-    // =====================================================================
     @PutMapping(value = "/update-status", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ORDER_U')")
     @Transactional
     public ApiMessageDto<Void> updateStatus(@Valid @RequestBody UpdateOrderStatusForm form,
                                             BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return makeResponse(false, null, "Invalid form", ErrorCode.ERROR_INVALID_FORM);
-        }
-
         Order order = orderRepository.findById(form.getId())
                 .orElseThrow(() -> new NotFoundException("Order not found", ErrorCode.ORDER_ERROR_NOT_FOUND));
 
@@ -111,11 +92,6 @@ public class OrderController extends ABasicController {
         return makeSuccessResponse(null, "Update order status success");
     }
 
-    // =====================================================================
-    // 4. THỐNG KÊ ĐƠN HÀNG TRONG THÁNG - Chỉ Admin
-    //    GET /v1/order/statistics
-    //    Tham số tùy chọn: month (1-12), year (mặc định tháng/năm hiện tại)
-    //    Trả về: tổng doanh thu, tổng đơn, đơn mới, đơn hoàn thành, đơn hủy, top 5 SP bán chạy
     // =====================================================================
     @GetMapping(value = "/statistics", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('ORDER_S')")
@@ -146,12 +122,12 @@ public class OrderController extends ABasicController {
         Long cancelledOrders = orderRepository.countByStatusAndDateRange(MgrConstant.ORDER_STATUS_CANCELLED, fromDate, toDate);
 
         // Lấy top 5 sản phẩm bán chạy
-        List<Object[]> rawTopProducts = orderItemRepository.findTopSellingProducts(
+        List<OrderItem[]> rawTopProducts = orderItemRepository.findTopSellingProducts(
                 fromDate, toDate, PageRequest.of(0, 5));
 
-        List<OrderStatisticsDto.TopProductDto> topProducts = new ArrayList<>();
+        List<TopProductDto> topProducts = new ArrayList<>();
         for (Object[] row : rawTopProducts) {
-            OrderStatisticsDto.TopProductDto dto = new OrderStatisticsDto.TopProductDto(
+           TopProductDto dto = new TopProductDto(
                     (Long) row[0],          // productId
                     (String) row[1],        // productName
                     (Long) row[2],          // totalQuantitySold
@@ -172,9 +148,6 @@ public class OrderController extends ABasicController {
         return makeSuccessResponse(statisticsDto, "Get order statistics success");
     }
 
-    // =====================================================================
-    // HELPER: Kiểm tra luồng trạng thái hợp lệ
-    // =====================================================================
     private boolean isValidStatusTransition(int currentStatus, Integer newStatus) {
         if (newStatus == null) return false;
 

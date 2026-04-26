@@ -29,21 +29,4 @@ public class OrderStatisticsDto {
 
     @ApiModelProperty(name = "topProducts", notes = "Top sản phẩm bán chạy nhất trong tháng")
     private List<TopProductDto> topProducts;
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class TopProductDto {
-        @ApiModelProperty(name = "productId")
-        private Long productId;
-
-        @ApiModelProperty(name = "productName")
-        private String productName;
-
-        @ApiModelProperty(name = "totalQuantitySold")
-        private Long totalQuantitySold;
-
-        @ApiModelProperty(name = "totalRevenue")
-        private Double totalRevenue;
-    }
 }
