@@ -26,6 +26,9 @@ public class MgrConstant {
     public static final Integer ORDER_STATUS_COMPLETED = 4;     // Hoàn thành
     public static final Integer ORDER_STATUS_CANCELLED = 0;     // Đã hủy
 
+    // Tenant types
+    public static final String TENANT_HEADER = "X-tenant";
+
     private MgrConstant() {
         throw new IllegalStateException("Utility class");
     }
