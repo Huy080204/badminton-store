@@ -31,4 +31,8 @@ public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecific
     @Query("SELECT COUNT(o) FROM Order o WHERE o.createdDate >= :fromDate AND o.createdDate <= :toDate")
     Long countOrdersByDateRange(@Param("fromDate") Date fromDate,
                                 @Param("toDate") Date toDate);
+
+    // Tìm đơn hàng PENDING (status=1) tạo trước thời điểm cutoff — dùng cho scheduler tự động hủy
+    @Query("SELECT o FROM Order o WHERE o.status = 1 AND o.createdDate < :cutoffTime")
+    List<Order> findExpiredPendingOrders(@Param("cutoffTime") Date cutoffTime);
 }

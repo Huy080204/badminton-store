@@ -26,6 +26,13 @@ public class MgrConstant {
     public static final Integer ORDER_STATUS_COMPLETED = 4;     // Hoàn thành
     public static final Integer ORDER_STATUS_CANCELLED = 0;     // Đã hủy
 
+    //Schedule Product
+    public static final Integer LOW_STOCK_THRESHOLD = 5;
+
+    //Shedile Order
+    public static final Integer CANCELLED_STATUS = 0;
+    public static final Integer EXPIRY_HOURS = 24;
+
     private MgrConstant() {
         throw new IllegalStateException("Utility class");
     }
